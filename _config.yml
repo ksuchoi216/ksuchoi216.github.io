@@ -15,13 +15,13 @@ title: "Data Science Lab(DSL)"
 description: "Let's Fall Forward!"
 
 # The subpath of your site, e.g.s /blog, for generating urls.
-baseurl: ""
+baseurl: "/datalab.github.io"
 
 # The base hostname & protocol of your site for where absolute urls are needed.
 url: "https://ksuchoi216.github.io"
 
 # Favicon
-favicon: images/favicon_.png
+favicon: images/favicon.png
 
 # Google Analytics id, e.g. "UA-NNNNNNNN-N"
 google_analytics: "G-K5YWW65QJM"
