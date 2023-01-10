@@ -15,10 +15,10 @@ title: "Kyungsu Choi"
 description: "Let's Fall Forward!"
 
 # The subpath of your site, e.g.s /blog, for generating urls.
-baseurl: ""
+baseurl: "https://ksuchoi216.github.io/"
 
 # The base hostname & protocol of your site for where absolute urls are needed.
-url: "https://scriptor-jekyll.netlify.com"
+url: ""
 
 # Favicon
 favicon: images/favicon.png
