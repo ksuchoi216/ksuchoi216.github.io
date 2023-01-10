@@ -9,7 +9,7 @@
 lang: en-US
 
 # Site title
-title: "Kyungsu Choi"
+title: "Data Science Lab(DSL)"
 
 # A description of your site for meta tag, search engine results.
 description: "Let's Fall Forward!"
@@ -18,13 +18,13 @@ description: "Let's Fall Forward!"
 baseurl: ""
 
 # The base hostname & protocol of your site for where absolute urls are needed.
-url: "https://ksuchoi216.github.io/"
+url: ""
 
 # Favicon
 favicon: images/favicon.png
 
 # Google Analytics id, e.g. "UA-NNNNNNNN-N"
-google_analytics: ""
+google_analytics: "G-K5YWW65QJM"
 
 # Site navigation - each item must have a title and a url.
 navigation:
@@ -36,7 +36,7 @@ navigation:
     url: /tags/
 
 # The shortname for your Disqus site to enable comments.
-disqus: justgoodthemes
+disqus: https-ksuchoi216-github-io
 
 # Colors
 accent_color: '#2d72d9'
