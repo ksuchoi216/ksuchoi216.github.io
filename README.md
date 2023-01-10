@@ -1,4 +1,6 @@
 # ABOUT
+## serve
+bundle exec jekyll serve --livereload
 
 ## Style Guide page
 [style guide demo page][https://scriptor-jekyll.netlify.app/style-guide]

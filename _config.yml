@@ -32,8 +32,8 @@ navigation:
     url: /
   - text: About
     url: /about/
-  - text: Tags
-    url: /tags/
+  - text: Archive
+    url: /archive/
 
 # The shortname for your Disqus site to enable comments.
 disqus: https-ksuchoi216-github-io

@@ -1,5 +1,5 @@
 ---
-layout: tags
-title: Tags
+layout: archive
+title: Archive
 description: A tags page
 ---
