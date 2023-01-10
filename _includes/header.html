@@ -18,7 +18,7 @@
           <div>baseurl {{ site.baseurl }}</div>
           <div>url {{ site.url }}</div>
 
-          <a class="{{ current }}" href="{{ item.url }}">{{ item.text }}</a>
+          <a class="{{ current }}" href="{{site.url}}{{ item.url }}">{{ item.text }}</a>
         </li>
         {% endfor %}
       </ul><!-- .menu -->
