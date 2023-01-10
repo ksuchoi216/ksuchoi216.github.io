@@ -17,6 +17,7 @@
           <div>{{ item.url }}</div>
           <div>baseurl {{ site.baseurl }}</div>
           <div>url {{ site.url }}</div>
+          <div>{{site.url}}{{item.url}}</div>
 
           <a class="{{ current }}" href="{{site.url}}{{ item.url }}">{{ item.text }}</a>
         </li>
