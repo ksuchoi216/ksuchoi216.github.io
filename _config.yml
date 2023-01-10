@@ -15,10 +15,10 @@ title: "Kyungsu Choi"
 description: "Let's Fall Forward!"
 
 # The subpath of your site, e.g.s /blog, for generating urls.
-baseurl: "https://ksuchoi216.github.io/"
+baseurl: ""
 
 # The base hostname & protocol of your site for where absolute urls are needed.
-url: ""
+url: "https://ksuchoi216.github.io/"
 
 # Favicon
 favicon: images/favicon.png
@@ -34,8 +34,6 @@ navigation:
     url: /about/
   - text: Tags
     url: /tags/
-  - text: Style Guide
-    url: /style-guide/
 
 # The shortname for your Disqus site to enable comments.
 disqus: justgoodthemes
