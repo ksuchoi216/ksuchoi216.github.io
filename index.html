@@ -7,8 +7,6 @@ layout: default
   {% for post in paginator.posts %}
   <article class="post">
     <header class="post-header">
-      <div>{{site.baseurl}}</div>
-      <div>{{post.url}}</div>
       <time class="post-date" datetime="{{ post.date | date: "%Y-%m-%d" }}">{{post.date | date: "%B %-d, %Y" }}</time>
       <h2 class="post-title"><a href="{{ site.baseurl }}{{ post.url }}" rel="bookmark">{{post.title}}</a></h2>
       <div class="post-meta">
