@@ -14,6 +14,10 @@
         {% assign current = 'nav-current' %}
         {% endif %}
         <li class="menu-item {{ current }}">
+          <div>{{ item.url }}</div>
+          <div>baseurl {{ site.baseurl }}</div>
+          <div>url {{ site.url }}</div>
+
           <a class="{{ current }}" href="{{ item.url }}">{{ item.text }}</a>
         </li>
         {% endfor %}
