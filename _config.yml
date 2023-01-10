@@ -9,12 +9,12 @@
 lang: en-US
 
 # Site title
-title: "Scriptor"
+title: "Kyungsu Choi"
 
 # A description of your site for meta tag, search engine results.
-description: "Scriptor is a minimal, clean, modern & responsive Jekyll theme for writers"
+description: "Let's Fall Forward!"
 
-# The subpath of your site, e.g. /blog, for generating urls.
+# The subpath of your site, e.g.s /blog, for generating urls.
 baseurl: ""
 
 # The base hostname & protocol of your site for where absolute urls are needed.
@@ -32,12 +32,10 @@ navigation:
     url: /
   - text: About
     url: /about/
-  - text: Style Guide
-    url: /style-guide/
   - text: Tags
     url: /tags/
-  - text: Download
-    url: https://github.com/JustGoodThemes/Scriptor-Jekyll-Theme
+  - text: Style Guide
+    url: /style-guide/
 
 # The shortname for your Disqus site to enable comments.
 disqus: justgoodthemes
