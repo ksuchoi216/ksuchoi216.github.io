@@ -9,14 +9,23 @@ import os
 def get_args():
     parser = argparse.ArgumentParser(description="add blog post file")
     parser.add_argument("--date", "-d", help="put yymmdd", type=str)
-    parser.add_argument("--keyword", "-k", help="put keyword", type=str)
+    parser.add_argument("--keyword", "-k", required=True, help="put keyword", type=str)
+    parser.add_argument(
+        "--category",
+        "-c",
+        required=True,
+        help="put category",
+        type=str,
+        default="Time-series",
+        choices=["Time-Series", "Stock", "Book"],
+    )
     args = parser.parse_args()
     return args
 
 
 if __name__ == "__main__":
     args = get_args()
-
+    category = args.category
     if args.keyword is None:
         raise Exception("No Keyword!: put keyword by using -k")
     else:
@@ -57,7 +66,7 @@ if __name__ == "__main__":
         f"title: '{keyword}'",
         "excerpt_separator: '<!--more-->'",
         "categories:",
-        "   - None",
+        f"   - {category}",
         "tags:",
         "   - None",
         "# image:",
@@ -66,14 +75,14 @@ if __name__ == "__main__":
         f"#     caption: ",
         f"# hidden: true",
         "---",
-        "[What to learn?] ",
+        "What to learn?, why read?",
         "이 글을 읽는다면 아래 내용을 얻어가게 됩니다.",
         "* ",
         "<!--more-->",
-        "## [Title]",
-        "### [What?] ",
-        "### [Why?] ",
-        "### [How?] ",
+        "## Title",
+        "### What? ",
+        "### Why? ",
+        "### How? ",
         "## 지금까지 배운 것 복습!",
         "## 참고 자료",
     ]

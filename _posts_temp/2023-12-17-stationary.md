@@ -2,7 +2,7 @@
 title: '시간에 따라 변하는 시계열 데이터는 안돼! - 정상성'
 excerpt_separator: '<!--more-->'
 categories:
-   - ARIMA
+   - Time-series
 tags:
    - None
 # image:
