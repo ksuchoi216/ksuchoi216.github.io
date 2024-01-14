@@ -6,8 +6,8 @@ categories:
 tags:
    - time-series
 image:
-#     path: .//images/stationary/00_main.png
-     thumbnail: .//images/stationary/00_main.png
+#     path: ./images/stationary/00_main.png
+     thumbnail: ./images/stationary/00_main.png
 #     caption: 
 ---
 
