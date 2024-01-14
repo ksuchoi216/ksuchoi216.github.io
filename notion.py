@@ -147,12 +147,16 @@ def main(base):
     post_base_dir = "./_posts"
     md_path_new = f"{post_base_dir}/{date}-{keyword}.md"
 
-    img_base_dir = f"./{img_base_dir}"
-    img_path_org = [f"./{path}" for path in img_path_org]
+
+
+    img_base_dir = f".{img_base_dir}"
     img_path_new = [
         f"{img_base_dir}/{num:02d}_{pic_name}.png"
         for num, pic_name in enumerate(pic_names)
     ]
+
+
+    print("img_base_dir:", img_base_dir)
 
     if not os.path.exists(img_base_dir):
         os.makedirs(img_base_dir)
