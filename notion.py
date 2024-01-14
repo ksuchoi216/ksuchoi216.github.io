@@ -89,7 +89,7 @@ def main(base):
             break
 
     # * convert makedown
-    img_base_dir = f"./images/{keyword}"
+    img_base_dir = f"/images/{keyword}"
 
     lines = lines[slice_index + 2 :]
 
@@ -146,6 +146,9 @@ def main(base):
 
     post_base_dir = "./_posts"
     md_path_new = f"{post_base_dir}/{date}-{keyword}.md"
+
+    img_base_dir = f"./{img_base_dir}"
+    img_path_org = [f"./{path}" for path in img_path_org]
     img_path_new = [
         f"{img_base_dir}/{num:02d}_{pic_name}.png"
         for num, pic_name in enumerate(pic_names)
@@ -158,7 +161,7 @@ def main(base):
 
     for old_path, new_path in zip(img_path_org, img_path_new):
         print(old_path, ">>>img path>>>", new_path)
-        shutil.copy(old_path, new_path)
+        shutil.copy(f"{old_path}", f"{new_path}")
 
     # * rewrite makedown
     start_block = [
@@ -175,8 +178,8 @@ def main(base):
 
     img_block = [
         "image:\n",
-        f"     path: {img_path_new[0]}\n",
-        f"#     thumbnail: {img_path_new[0]}\n",
+        f"#     path: {img_path_new[0]}\n",
+        f"     thumbnail: {img_path_new[0]}\n",
         f"#     caption: \n",
     ]
     end_block = [
