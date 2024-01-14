@@ -121,7 +121,7 @@ def main(base):
                 caption_text = pic_name
                 lines[i] = ""
                 removal_idx.append(i + 1)
-            img_cnt +=1
+            img_cnt += 1
 
         if (curr_line == pic_name) and pic_name != "":  # delete pic_name line
             lines[i] = ""
