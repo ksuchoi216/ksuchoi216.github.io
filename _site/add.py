@@ -9,13 +9,27 @@ import os
 def get_args():
     parser = argparse.ArgumentParser(description="add blog post file")
     parser.add_argument("--date", "-d", help="put yymmdd", type=str)
-    parser.add_argument("--num", "-n", help="put file number", type=str, default="0")
+    parser.add_argument("--keyword", "-k", required=True, help="put keyword", type=str)
+    parser.add_argument(
+        "--category",
+        "-c",
+        required=True,
+        help="put category",
+        type=str,
+        default="Time-series",
+        choices=["Time-Series", "Stock", "Book"],
+    )
     args = parser.parse_args()
     return args
 
 
 if __name__ == "__main__":
     args = get_args()
+    category = args.category
+    if args.keyword is None:
+        raise Exception("No Keyword!: put keyword by using -k")
+    else:
+        keyword = args.keyword
 
     if args.date is not None:
         dt = args.date
@@ -26,16 +40,13 @@ if __name__ == "__main__":
         day = int(dt[4:])
         dt = datetime(year, month, day)
         post_date = dt.strftime("%Y-%m-%d")
-        img_date = dt.strftime("%Y%m%d")
-
+        # img_date = dt.strftime("%Y%m%d")
     else:
         post_date = datetime.now().strftime("%Y-%m-%d")
-        img_date = datetime.now().strftime("%Y%m%d")
+        # img_date = datetime.now().strftime("%Y%m%d")
 
-    num = args.num
-
-    img_dir = f"./images/{img_date}"
-    img_path = os.path.join(img_dir, f"p{num}-0.jpg")
+    img_dir = f"./images/{keyword}"
+    img_path = os.path.join(img_dir, f"main.jpg")
 
     # * image
     if not os.path.exists(img_dir):
@@ -52,10 +63,10 @@ if __name__ == "__main__":
     # * post
     lines = [
         "---",
-        "title: 'None'",
+        f"title: '{keyword}'",
         "excerpt_separator: '<!--more-->'",
         "categories:",
-        "   - None",
+        f"   - {category}",
         "tags:",
         "   - None",
         "# image:",
@@ -64,18 +75,18 @@ if __name__ == "__main__":
         f"#     caption: ",
         f"# hidden: true",
         "---",
-        "[What to learn?] ",
+        "What to learn?, why read?",
         "이 글을 읽는다면 아래 내용을 얻어가게 됩니다.",
         "* ",
         "<!--more-->",
-        "## [Title]",
-        "### [What?] ",
-        "### [Why?] ",
-        "### [How?] ",
+        "## Title",
+        "### What? ",
+        "### Why? ",
+        "### How? ",
         "## 지금까지 배운 것 복습!",
         "## 참고 자료",
     ]
-    post_path = os.path.join("./_posts", f"{post_date}-p{num}-.md")
+    post_path = os.path.join("./_posts", f"{post_date}-{keyword}.md")
 
     if not os.path.exists(post_path):
         with open(post_path, "w") as f:
