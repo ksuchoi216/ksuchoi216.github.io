@@ -52,7 +52,6 @@ def main(base):
     pic_name = ""
     slice_index = 0
     tags = []
-
     # * get setting variables
     for i, line in enumerate(lines):
         # curr_line = line.strip()
@@ -97,6 +96,8 @@ def main(base):
     removal_idx = []
     pic_name = ""
     pic_names = []
+    caption_text = ""
+    img_cnt = 0
     for i, line in enumerate(lines):
         # curr_line = line.strip()
         org_line = line
@@ -116,9 +117,11 @@ def main(base):
             ] = f"![{pic_name}]({img_base_dir}/{num:02d}_{pic_name}.png){{:, .align-center}}"
             removal_idx.append(i - 1)
             pic_names.append(pic_name)
-            if pic_name == "main":
+            if img_cnt == 0:
+                caption_text = pic_name
                 lines[i] = ""
                 removal_idx.append(i + 1)
+            img_cnt +=1
 
         if (curr_line == pic_name) and pic_name != "":  # delete pic_name line
             lines[i] = ""
@@ -147,25 +150,25 @@ def main(base):
     post_base_dir = "./_posts"
     md_path_new = f"{post_base_dir}/{date}-{keyword}.md"
 
-
-
-    img_base_dir = f".{img_base_dir}"
+    _img_base_dir = f".{img_base_dir}"
     img_path_new = [
-        f"{img_base_dir}/{num:02d}_{pic_name}.png"
+        f"{_img_base_dir}/{num:02d}_{pic_name}.png"
         for num, pic_name in enumerate(pic_names)
     ]
 
+    print("img_base_dir:", _img_base_dir)
 
-    print("img_base_dir:", img_base_dir)
-
-    if not os.path.exists(img_base_dir):
-        os.makedirs(img_base_dir)
+    if not os.path.exists(_img_base_dir):
+        os.makedirs(_img_base_dir)
     else:
-        print(f"The image directory already exists: {img_base_dir}")
+        print(f"The image directory already exists: {_img_base_dir}")
 
     for old_path, new_path in zip(img_path_org, img_path_new):
         print(old_path, ">>>img path>>>", new_path)
         shutil.copy(f"{old_path}", f"{new_path}")
+
+    img_path_main = img_path_new[0][1:]
+    print("img_path_main:", img_path_main)
 
     # * rewrite makedown
     start_block = [
@@ -182,9 +185,9 @@ def main(base):
 
     img_block = [
         "image:\n",
-        f"#     path: {img_path_new[0]}\n",
-        f"     thumbnail: {img_path_new[0]}\n",
-        f"#     caption: \n",
+        f"     path: {img_path_main}\n",
+        f"     thumbnail: {img_path_main}\n",
+        f"     caption: {caption_text}\n",
     ]
     end_block = [
         "---\n",
