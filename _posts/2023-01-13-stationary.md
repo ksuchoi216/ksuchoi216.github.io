@@ -6,9 +6,9 @@ categories:
 tags:
    - time-series
 image:
-#     path: ./images/stationary/00_main.png
-     thumbnail: ./images/stationary/00_main.png
-#     caption: 
+     path: /images/stationary/00_main.png
+     thumbnail: /images/stationary/00_main.png
+     caption: main
 ---
 
 
