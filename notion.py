@@ -19,7 +19,7 @@ def move_notion_zip_files(isCopy=False):
     # pattern = re.compile(
     #     r"\b[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}_Export-[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}\b.zip"
     # )
-    paths = glob.glob(f"{DOWNLOAD_DIR}/n_*.zip")
+    paths = glob.glob(f"{DOWNLOAD_DIR}/n-*.zip")
     # notion_zip_paths = [
     #     path for path in paths if pattern.match(os.path.relpath(path, DOWNLOAD_DIR))
     # ]

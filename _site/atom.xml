@@ -1,7 +1,31 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.3">Jekyll</generator><link href="http://localhost:4000/atom.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2024-01-21T16:37:33+09:00</updated><id>http://localhost:4000/atom.xml</id><title type="html">시계열랩</title><subtitle>Time-series is all you need</subtitle><author><name>시계열랩</name><email>ksuchoi216@gmail.com</email></author><entry><title type="html">Autoformer</title><link href="http://localhost:4000/data-science/2023/01/21/autoformer.html" rel="alternate" type="text/html" title="Autoformer" /><published>2023-01-21T00:00:00+09:00</published><updated>2023-01-21T00:00:00+09:00</updated><id>http://localhost:4000/data-science/2023/01/21/autoformer</id><content type="html" xml:base="http://localhost:4000/data-science/2023/01/21/autoformer.html"><![CDATA[<p>일단 Autoformer는 기존에 시계열 예측에 사용된 트랜스포머 모델에 시계열 순서 정보를 잃어버리는 고질적 문제를 해결하기 위해 제안되었습니다. 트랜스포머 계열은 시계열 데이터 본래 특징을 잃어버립니다. 시간 순서대로 연결되어 있는 데이터가 시계열 데이터인데 이러한 정보를 트랜스포머 모델들은 반영하지 못합니다. 그렇다면 어떻게 autoformer가 해결했는지 탐험해보겠습니다.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.3">Jekyll</generator><link href="http://localhost:4000/atom.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2024-01-21T20:27:03+09:00</updated><id>http://localhost:4000/atom.xml</id><title type="html">시계열랩</title><subtitle>Time-series is all you need</subtitle><author><name>시계열랩</name><email>ksuchoi216@gmail.com</email></author><entry><title type="html">Autoformer</title><link href="http://localhost:4000/data-science/2023/01/21/autoformer.html" rel="alternate" type="text/html" title="Autoformer" /><published>2023-01-21T00:00:00+09:00</published><updated>2023-01-21T00:00:00+09:00</updated><id>http://localhost:4000/data-science/2023/01/21/autoformer</id><content type="html" xml:base="http://localhost:4000/data-science/2023/01/21/autoformer.html"><![CDATA[<p>일단 Autoformer는 기존에 시계열 예측에 사용된 트랜스포머 모델에 시계열 순서 정보를 잃어버리는 고질적 문제를 해결하기 위해 제안되었습니다. 트랜스포머 계열은 시계열 데이터 본래 특징을 잃어버립니다. 시간 순서대로 연결되어 있는 데이터가 시계열 데이터인데 이러한 정보를 트랜스포머 모델들은 반영하지 못합니다. 그렇다면 어떻게 autoformer가 해결했는지 탐험해보겠습니다.</p>
 
 <!--more-->
-<h2 id="what-is-autoformer">What is Autoformer?</h2>
+
+<ul>
+  <li><a href="#1-what-is-autoformer">1. What is Autoformer?</a>
+    <ul>
+      <li><a href="#11-transformer">1.1. Transformer</a></li>
+      <li><a href="#12-auto-correlation">1.2. Auto-correlation</a></li>
+      <li><a href="#13-series-decomposition">1.3. Series Decomposition</a></li>
+    </ul>
+  </li>
+  <li><a href="#2-how-does-it-work">2. How does it work?</a></li>
+  <li><a href="#3-details">3. Details</a>
+    <ul>
+      <li><a href="#31-series-decomposition-block">3.1. Series decomposition block</a></li>
+      <li><a href="#32-auto-correlation-block">3.2. Auto correlation block</a></li>
+    </ul>
+  </li>
+  <li><a href="#4-result">4. Result</a></li>
+  <li><a href="#5-summary">5. Summary</a>
+    <ul>
+      <li><a href="#51-reference">5.1. Reference</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="1-what-is-autoformer">1. What is Autoformer?</h2>
 
 <p>Autoformer는 Auto-correlation + Transformer을 결합한 모델입니다. 시계열 데이터를 더 잘 학습하기 위해 Series Decomposition 적용합니다.</p>
 
@@ -13,17 +37,23 @@
   <li>Series Decomposition</li>
 </ul>
 
+<h3 id="11-transformer">1.1. Transformer</h3>
+
 <p>Transformer는 Self-attention을 통해 문장을 이해하고 해석하는데 특화된 모델입니다. GPT에 T가 트랜스포머 사용된 것을 알 수 있듯이 텍스트 데이터에 잘쓰이는 모델입니다.</p>
 
 <p>트랜스포머 장점은 시계열 데이터에서 관계를 찾을 수 있다는 큰 장점이 있습니다. 그러므로 단어를 순서대로 연결되어있는 문장인 텍스트 데이터에 적합하다고 할 수 있습니다. 자세한 사항은 트랜스포머를 별도의 포스팅으로 설명 드리겠습니다.</p>
 
 <p>정리하자면, 트랜스포머는 <strong>시계열 데이터(t, t-1, t-2 …)간에 관계를 잘 찾아 학습하는 장점</strong>이 있습니다. 예를 들어 t와 t-1 관계 혹은 t-2와 t-5, t-6, t-7의 관계라던지 여러 조합을 통해 무엇이 더 연관있는지 찾아 낼 수 있습니다.</p>
 
+<h3 id="12-auto-correlation">1.2. Auto-correlation</h3>
+
 <p>Auto-correlation은 <strong>lagged time(t-1, t-2, ..)에 대해 correlation coefficients</strong>를 구합니다. 쉽게 말해 시간 지연된 데이터와 상관 관계가 어느 정도 인지 -1부터 1까지 숫자로 나타낸 값입니다.</p>
 
 <p>시계열 데이터에서는 빠질 수 없는 특징입니다. 예를 들어 카드 소비량 데이터를 보자면 금요일, 주말 이렇게 구매량이 늘어나는 것을 일별로 ACF(auto-correlation function) plot을 그려보면 한 눈에 파악할 수 있습니다.</p>
 
 <p>정리하자면, 자기 상관은 시간 지연에 대해 상관 관계를 계산합니다.</p>
+
+<h3 id="13-series-decomposition">1.3. Series Decomposition</h3>
 
 <p>마지막으로 Series Decomposition이 남았습니다. 간단합니다. 시계열 분석에 기초라고 할 수 있는 Decomposition과 크게 다르지 않습니다. 있는 그대로 시계열 데이터를 사용하면 분석 혹은 예측이 부정확하기 때문에 <strong>추세(trend), 계절성(seasonal), 그 외(remainer)로 나누어 예측할려고 시계열 데이터를 분해</strong>합니다.</p>
 
@@ -41,7 +71,7 @@
 
 <p>그렇다면 논문을 한 번 들여다 보면서 추가적으로 설명 드리겠습니다. 사실 아래 그림을 이해하면 다 이해한 것입니다.</p>
 
-<h2 id="how-does-it-work">How does it work?</h2>
+<h2 id="2-how-does-it-work">2. How does it work?</h2>
 
 <p>트랜스 포머 구조인 Encoder(해석하는 부분)와 Decoder(예측하는 부분)로 구성되어 있습니다(물론 딱 해석과 예측하는 부분이라고 할 수 없지만 이해를 위해 러프하게 설명합니다).</p>
 
@@ -56,9 +86,9 @@
 
 <p>이 논문에서는 이 시계열 데이터 간에 관계성을 Auto correlation을 반영해서 계산해보자가 핵심입니다. 물론 Series Decomposition을 통해 시계열 데이터를 좀 더 정확하게 분석하고 예측하게 만들었습니다.</p>
 
-<h2 id="details">Details</h2>
+<h2 id="3-details">3. Details</h2>
 
-<h3 id="series-decomposition-block">Series decomposition block</h3>
+<h3 id="31-series-decomposition-block">3.1. Series decomposition block</h3>
 
 <p>흔히 복잡한 시간 패턴을 학습하기 위해 시계열을 추세(trend), 계절성(seasonality)으로 분리합니다.</p>
 
@@ -89,7 +119,7 @@ X_s = X - X_t\]
 
 <p>위와 같이 코딩할 수 있습니다.</p>
 
-<h3 id="auto-correlation-block">Auto correlation block</h3>
+<h3 id="32-auto-correlation-block">3.2. Auto correlation block</h3>
 
 <p>자세한 방법은 아래 그림처럼 논문에 잘 설명 되어 있기에 참조하시기 바랍니다.
 <img src="/images/autoformer/02_auto_correlation_block.png" alt="auto_correlation_block" class="align-center" /></p>
@@ -110,12 +140,12 @@ X_s = X - X_t\]
 
 <p>위와 같이 torch.fft.rfft를 통해 간단히 계산할 수 있습니다.</p>
 
-<h2 id="result">Result</h2>
+<h2 id="4-result">4. Result</h2>
 
 <p>아래 표를 보시면 알 수 있듯이 Informer, logtrans, reformer같은 transformer계열보다 MSE, MAE가 낮은 것을 확인 할 수 있습니다. 즉 시계열 정보를 잃어버리지 않고 잘 추출해서 트랜스포머를 구성한 것을 유추해볼 수 있습니다.
 <img src="/images/autoformer/03_result.png" alt="result" class="align-center" /></p>
 
-<h2 id="summary">Summary</h2>
+<h2 id="5-summary">5. Summary</h2>
 
 <p>다시 정리해봅시다.</p>
 
@@ -123,7 +153,13 @@ X_s = X - X_t\]
 
 <p>어떻게 해결했나요? Auto-correlation, skip-connection, series decomposition을 사용해서 해결 했습니다.</p>
 
-<p>다른 장점은 없나요? auto-corration과 series decomposition을 사용했기 때문에 시계열적 특징도 적절히 추출 되었습니다.</p>]]></content><author><name>시계열랩</name><email>ksuchoi216@gmail.com</email></author><category term="data-science" /><category term="time-series" /><category term="transformer" /><summary type="html"><![CDATA[일단 Autoformer는 기존에 시계열 예측에 사용된 트랜스포머 모델에 시계열 순서 정보를 잃어버리는 고질적 문제를 해결하기 위해 제안되었습니다. 트랜스포머 계열은 시계열 데이터 본래 특징을 잃어버립니다. 시간 순서대로 연결되어 있는 데이터가 시계열 데이터인데 이러한 정보를 트랜스포머 모델들은 반영하지 못합니다. 그렇다면 어떻게 autoformer가 해결했는지 탐험해보겠습니다.]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/images/autoformer/00_main.png" /><media:content medium="image" url="http://localhost:4000/images/autoformer/00_main.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">시간에 따라 변하는 시계열 데이터 판단 - 정상성</title><link href="http://localhost:4000/data-science/2023/01/13/stationary.html" rel="alternate" type="text/html" title="시간에 따라 변하는 시계열 데이터 판단 - 정상성" /><published>2023-01-13T00:00:00+09:00</published><updated>2023-01-13T00:00:00+09:00</updated><id>http://localhost:4000/data-science/2023/01/13/stationary</id><content type="html" xml:base="http://localhost:4000/data-science/2023/01/13/stationary.html"><![CDATA[<p>시계열 분석 및 예측에 기초 중 기초, 정상성에 대해 알아봅시다.
+<p>다른 장점은 없나요? auto-corration과 series decomposition을 사용했기 때문에 시계열적 특징도 적절히 추출 되었습니다.</p>
+
+<h3 id="51-reference">5.1. Reference</h3>
+
+<p>!Autoformer</p>
+
+<p><a href="https://proceedings.neurips.cc/paper/2021/hash/bcc0d400288793e8bdcd7c19a8ac0c2b-Abstract.html"></a></p>]]></content><author><name>시계열랩</name><email>ksuchoi216@gmail.com</email></author><category term="data-science" /><category term="time-series" /><category term="transformer" /><summary type="html"><![CDATA[일단 Autoformer는 기존에 시계열 예측에 사용된 트랜스포머 모델에 시계열 순서 정보를 잃어버리는 고질적 문제를 해결하기 위해 제안되었습니다. 트랜스포머 계열은 시계열 데이터 본래 특징을 잃어버립니다. 시간 순서대로 연결되어 있는 데이터가 시계열 데이터인데 이러한 정보를 트랜스포머 모델들은 반영하지 못합니다. 그렇다면 어떻게 autoformer가 해결했는지 탐험해보겠습니다.]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/images/autoformer/00_main.png" /><media:content medium="image" url="http://localhost:4000/images/autoformer/00_main.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">시간에 따라 변하는 시계열 데이터 판단 - 정상성</title><link href="http://localhost:4000/data-science/2023/01/13/stationary.html" rel="alternate" type="text/html" title="시간에 따라 변하는 시계열 데이터 판단 - 정상성" /><published>2023-01-13T00:00:00+09:00</published><updated>2023-01-13T00:00:00+09:00</updated><id>http://localhost:4000/data-science/2023/01/13/stationary</id><content type="html" xml:base="http://localhost:4000/data-science/2023/01/13/stationary.html"><![CDATA[<p>시계열 분석 및 예측에 기초 중 기초, 정상성에 대해 알아봅시다.
 이 글을 읽는다면 아래 내용을 얻어가게 됩니다.</p>
 
 <ul>
@@ -136,9 +172,9 @@ X_s = X - X_t\]
 <p>들어가기 전에, 새로운 용어가 나왔을 때는 어원이나 한자를 보는게 이해에 도움이 됩니다.
 한자로는 정할 정에 항상 항을 항상 변하지 않는다(영어로는 station 머물러 있는 느낌)라고 이해하면 쉽습니다.</p>
 
-<h2 id="정상성">정상성</h2>
+<h2 id="1-정상성">1. 정상성</h2>
 
-<h3 id="정상성stationary이란">정상성(Stationary)이란?</h3>
+<h3 id="11-정상성stationary이란">1.1. 정상성(Stationary)이란?</h3>
 
 <p>먼저 결론부터 말하겠습니다. <strong>시간에 영향 받지 않는 시계열(정상성)은 예측</strong>이 불가능합니다.</p>
 
@@ -173,14 +209,14 @@ X_s = X - X_t\]
 
 <p>위에 답이 있습니다. 답부터 말하자면 차분(differencing)을 하면 됩니다. 차분은 정상성이 아닌(non-sationary) 시계열 데이터를 만드는 가장 쉬운 방법입니다. 위에 구글 주가 종가 그래프의 ACF 그래프를 보면 자연스럽게 알 수 있었습니다.</p>
 
-<h2 id="지금까지-배운-것-복습">지금까지 배운 것 복습!</h2>
+<h2 id="2-지금까지-배운-것-복습">2. 지금까지 배운 것 복습!</h2>
 
 <ul>
   <li>정상성(시간에 따라 변화하지 않는다)인 시계열 데이터이면 예측이 가능하다.</li>
   <li>만약 정상성이 확보되지 않는 시계열 데이터라면, 차분을 이용해 정상성을 확보해보자.</li>
 </ul>
 
-<h2 id="참고-자료">참고 자료</h2>
+<h2 id="3-참고-자료">3. 참고 자료</h2>
 
 <p>시계열 예측에 있어 바이블인 Rob Hyndman 교수님의 책 ‘Forecasting principles and practice 3rd’ 내용을 바탕으로 내용을 구성했습니다.</p>
 

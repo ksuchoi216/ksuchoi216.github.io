@@ -5,7 +5,7 @@ var store = [{
         "url": "http://localhost:4000/data-science/2023/01/13/stationary.html"
       },{
         "title": "Autoformer",
-        "excerpt":"일단 Autoformer는 기존에 시계열 예측에 사용된 트랜스포머 모델에 시계열 순서 정보를 잃어버리는 고질적 문제를 해결하기 위해 제안되었습니다. 트랜스포머 계열은 시계열 데이터 본래 특징을 잃어버립니다. 시간 순서대로 연결되어 있는 데이터가 시계열 데이터인데 이러한 정보를 트랜스포머 모델들은 반영하지 못합니다. 그렇다면 어떻게 autoformer가 해결했는지 탐험해보겠습니다. What is Autoformer? Autoformer는 Auto-correlation + Transformer을 결합한...","categories": ["data-science"],
+        "excerpt":"일단 Autoformer는 기존에 시계열 예측에 사용된 트랜스포머 모델에 시계열 순서 정보를 잃어버리는 고질적 문제를 해결하기 위해 제안되었습니다. 트랜스포머 계열은 시계열 데이터 본래 특징을 잃어버립니다. 시간 순서대로 연결되어 있는 데이터가 시계열 데이터인데 이러한 정보를 트랜스포머 모델들은 반영하지 못합니다. 그렇다면 어떻게 autoformer가 해결했는지 탐험해보겠습니다. 1. What is Autoformer? 1.1. Transformer 1.2. Auto-correlation...","categories": ["data-science"],
         "tags": ["time-series","transformer"],
         "url": "http://localhost:4000/data-science/2023/01/21/autoformer.html"
       },]
