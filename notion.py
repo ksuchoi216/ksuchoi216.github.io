@@ -52,6 +52,7 @@ def main(base):
     pic_name = ""
     slice_index = 0
     tags = []
+
     # * get setting variables
     for i, line in enumerate(lines):
         # curr_line = line.strip()
@@ -116,12 +117,14 @@ def main(base):
                 i
             ] = f"![{pic_name}]({img_base_dir}/{num:02d}_{pic_name}.png){{:, .align-center}}"
             removal_idx.append(i - 1)
+
             pic_names.append(pic_name)
+
             if img_cnt == 0:
                 caption_text = pic_name
                 lines[i] = ""
                 removal_idx.append(i + 1)
-            img_cnt +=1
+            img_cnt += 1
 
         if (curr_line == pic_name) and pic_name != "":  # delete pic_name line
             lines[i] = ""

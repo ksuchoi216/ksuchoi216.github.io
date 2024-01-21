@@ -17,7 +17,7 @@
 remote_theme: mmistakes/so-simple-theme
 skin: "/assets/css/skins/default.css"
 locale: en-US
-title: "데싸열개"
+title: "시계열랩"
 description: "Time-series is all you need"
 baseurl: "" # the subpath of your site, e.g. "/blog"
 url: "https://ksuchoi216.github.io" # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
@@ -40,7 +40,7 @@ google_analytics: G-S4Z58P210B # Google Analytics id, e.g. "UA-NNNNNNNN-N"
 disqus:
   shortname: https-ksuchoi216-github-io # Disqus shortname, e.g. "my_disqus_shortname"
 twitter:
-  username: mmistakes # site's Twitter username
+  username: ksuchoi216 # site's Twitter username
 
 # Liquid
 liquid:
@@ -106,7 +106,7 @@ defaults:
 
 # Site Author
 author:
-  name: KC
+  name: 시계열랩
   picture: /images/favicon/org.png
   email: ksuchoi216@gmail.com
   twitter: ksuchoi216
