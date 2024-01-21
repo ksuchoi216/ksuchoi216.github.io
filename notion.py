@@ -1,3 +1,4 @@
+import sys
 import argparse
 from types import SimpleNamespace
 from datetime import datetime
@@ -98,7 +99,8 @@ def main(base):
     pic_name = ""
     pic_names = []
     caption_text = ""
-    img_cnt = 0
+    pic_num = 0
+    ismainpic = True
     for i, line in enumerate(lines):
         # curr_line = line.strip()
         org_line = line
@@ -109,22 +111,23 @@ def main(base):
         if curr_line.startswith("!["):  # convert image path
             pic_name = re.search(r"\[([^]]+)\]", curr_line).group(1)
             old_name = re.search(r"\/([^\/]+)\.png", curr_line).group(1)
-            if old_name == "Untitled":
-                num = 0
-            else:
-                num = int(old_name[-2:])
+            # if old_name == "Untitled":
+            # num = 0
+            # else:
+            # num = int(old_name[-2:])
             lines[
                 i
-            ] = f"![{pic_name}]({img_base_dir}/{num:02d}_{pic_name}.png){{:, .align-center}}"
+            ] = f"![{pic_name}]({img_base_dir}/{pic_num:02d}_{pic_name}.png){{:, .align-center}}"
             removal_idx.append(i - 1)
 
-            pic_names.append(pic_name)
-
-            if img_cnt == 0:
+            if pic_num == 0:
                 caption_text = pic_name
                 lines[i] = ""
                 removal_idx.append(i + 1)
-            img_cnt += 1
+                pic_names.append("main")
+            else:
+                pic_names.append(pic_name)
+            pic_num += 1
 
         if (curr_line == pic_name) and pic_name != "":  # delete pic_name line
             lines[i] = ""
@@ -166,12 +169,17 @@ def main(base):
     else:
         print(f"The image directory already exists: {_img_base_dir}")
 
+    # if not os.path.exists(_img_base_dir):
     for old_path, new_path in zip(img_path_org, img_path_new):
         print(old_path, ">>>img path>>>", new_path)
         shutil.copy(f"{old_path}", f"{new_path}")
 
+    print(img_path_org)
+    print(img_path_new)
+
+    sys.exit()
     img_path_main = img_path_new[0][1:]
-    print("img_path_main:", img_path_main)
+    # print("img_path_main:", img_path_main)
 
     # * rewrite makedown
     start_block = [
@@ -199,6 +207,7 @@ def main(base):
     base_lines = start_block + tag_block + img_block + end_block
     lines = base_lines + content_lines
 
+    # if not os.path.exists(md_path_new):
     with open(md_path_new, "w") as file:
         file.writelines(lines)
 
@@ -224,8 +233,8 @@ if __name__ == "__main__":
         )
         main(unpack_path)
 
-    try:
-        shutil.rmtree(NOTION_DIR)
-        print(f"Successfully removed {NOTION_DIR}")
-    except OSError as e:
-        print(f"Error: {e.filename} - {e.strerror}")
+    # try:
+    #     shutil.rmtree(NOTION_DIR)
+    #     print(f"Successfully removed {NOTION_DIR}")
+    # except OSError as e:
+    #     print(f"Error: {e.filename} - {e.strerror}")
