@@ -16,14 +16,14 @@ CURRENT_DIR = "/Users/KC/Library/CloudStorage/GoogleDrive-ksuchoi216@gmail.com/M
 
 
 def move_notion_zip_files(isCopy=False):
-    pattern = re.compile(
-        r"\b[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}_Export-[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}\b.zip"
-    )
-    paths = glob.glob(f"{DOWNLOAD_DIR}/*.zip")
-    notion_zip_paths = [
-        path for path in paths if pattern.match(os.path.relpath(path, DOWNLOAD_DIR))
-    ]
-
+    # pattern = re.compile(
+    #     r"\b[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}_Export-[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}\b.zip"
+    # )
+    paths = glob.glob(f"{DOWNLOAD_DIR}/n_*.zip")
+    # notion_zip_paths = [
+    #     path for path in paths if pattern.match(os.path.relpath(path, DOWNLOAD_DIR))
+    # ]
+    notion_zip_paths = paths
     print(notion_zip_paths)
 
     for notion_zip_path in notion_zip_paths:
@@ -173,11 +173,8 @@ def main(base):
     for old_path, new_path in zip(img_path_org, img_path_new):
         print(old_path, ">>>img path>>>", new_path)
         shutil.copy(f"{old_path}", f"{new_path}")
-
     print(img_path_org)
-    print(img_path_new)
 
-    sys.exit()
     img_path_main = img_path_new[0][1:]
     # print("img_path_main:", img_path_main)
 
