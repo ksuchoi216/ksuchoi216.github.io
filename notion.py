@@ -148,10 +148,8 @@ def main(base):
     content_lines = [lines[i] for i in range(len(lines)) if i not in removal_idx]
 
     # * create and move files & folders
-    img_path_org = glob.glob(f"{base}/*/*.png")
-    img_path_org.insert(
-        0, img_path_org.pop(-1)
-    )  # move the Untitle.png to first element
+    
+
 
     post_base_dir = "./_posts"
     md_path_new = f"{post_base_dir}/{date}-{keyword}.md"
@@ -161,9 +159,17 @@ def main(base):
         f"{_img_base_dir}/{num:02d}_{pic_name}.png"
         for num, pic_name in enumerate(pic_names)
     ]
-
+    
+    pic_base = glob.glob(f"{base}/*/")[0]
+    img_path_org = []
+    for i in range(0, len(img_path_new)):
+        if i == 0:
+            path = f'{pic_base}Untitled.png'
+        else:   
+            path = f'{pic_base}Untitled {i}.png'
+        img_path_org.append(path)
+    print('img_path_org:', img_path_org)
     print("img_base_dir:", _img_base_dir)
-
     if not os.path.exists(_img_base_dir):
         os.makedirs(_img_base_dir)
     else:
