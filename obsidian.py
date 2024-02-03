@@ -13,6 +13,16 @@ OBSIDIAN_DIR = (
 )
 
 
+def copy_files():
+    paths = glob.glob(f"{OBSIDIAN_DIR}/**")
+    print(paths)
+    for path in paths:
+        if not os.path.exists(FOLDER_DIR):
+            os.makedirs(FOLDER_DIR)
+
+        shutil.copy(path, f"{CURRENT_DIR}/notion")
+
+
 def get_args(args, lines):
     cnt = 0
     tags = []
@@ -34,7 +44,7 @@ def get_args(args, lines):
 
     args.tags = tags
     print("tags:", tags)
-    lines = lines[args.slice_index + 2 :]
+    lines = lines[args.slice_index :]
     return args, lines
 
 
@@ -105,16 +115,6 @@ def _main(path):
     new_md_path = f"./_posts/{args.date}-{args.keyword}.md"
     with open(new_md_path, "w") as f:
         f.writelines(lines)
-
-
-def copy_files():
-    paths = glob.glob(f"{OBSIDIAN_DIR}/**")
-    print(paths)
-    for path in paths:
-        if not os.path.exists(FOLDER_DIR):
-            os.makedirs(FOLDER_DIR)
-
-        shutil.copy(path, f"{CURRENT_DIR}/notion")
 
 
 if __name__ == "__main__":
