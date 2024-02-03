@@ -1,1 +1,1 @@
-python notion.py
+python obsidian.py
