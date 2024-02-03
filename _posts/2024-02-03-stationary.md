@@ -6,10 +6,11 @@ categories:
 tags:
    - ts
 image:
-     path: /images/stationary/graphs.png
-     thumbnail: /images/stationary/graphs.png
+     path: ./images/stationary/graphs.png
+     thumbnail: ./images/stationary/graphs.png
 ---
 
+---
 
 시계열 분석 및 예측에 기초 중 기초, 정상성에 대해 알아봅시다.
 이 글을 읽는다면 아래 내용을 얻어가게 됩니다.

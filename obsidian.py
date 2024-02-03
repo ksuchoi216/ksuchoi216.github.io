@@ -50,16 +50,16 @@ def get_args(args, lines):
 
 def modify_lines(args, lines):
 
-    IMG_BASE = f"./images/{args.keyword}"
-    if not os.path.exists(IMG_BASE):
-        os.makedirs(IMG_BASE)
+    IMG_BASE = f"/images/{args.keyword}"
+    if not os.path.exists(f".{IMG_BASE}"):
+        os.makedirs(f".{IMG_BASE}")
 
     args.img_paths = []
     for i, line in enumerate(lines):
         if line.startswith("![["):
             img_file = re.search(r"\[\[(.+?)\]\]", line).group(1)
-            new_img_path = f"{IMG_BASE}/{img_file}"
             old_img_path = f"{args.old_dir}/attachments/{img_file}"
+            new_img_path = f".{IMG_BASE}/{img_file}"
             lines[i] = f"![{img_file}]({new_img_path}){{:, .align-center}}"
             args.img_paths.append([old_img_path, new_img_path])
 
@@ -81,8 +81,8 @@ def create_blocks(args, lines):
 
     img_block = [
         "image:\n",
-        f"     path: {args.img_paths[0][1][1:]}\n",
-        f"     thumbnail: {args.img_paths[0][1][1:]}\n",
+        f"     path: {args.img_paths[0][1]}\n",
+        f"     thumbnail: {args.img_paths[0][1]}\n",
     ]
     end_block = [
         "---\n",
@@ -109,7 +109,7 @@ def _main(path):
 
     lines = create_blocks(args, lines)
     for old_img_path, new_img_path in args.img_paths:
-        print(old_img_path, ">>>>>>", new_img_path)
+        print(f"{old_img_path}", ">>>>>>", new_img_path)
         shutil.copy(f"{old_img_path}", f"{new_img_path}")
 
     new_md_path = f"./_posts/{args.date}-{args.keyword}.md"
