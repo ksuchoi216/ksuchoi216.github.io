@@ -6,8 +6,8 @@ categories:
 tags:
    - ts
 image:
-     path: ./images/stationary/graphs.png
-     thumbnail: ./images/stationary/graphs.png
+     path: /images/stationary/graphs.png
+     thumbnail: /images/stationary/graphs.png
 ---
 
 ---
@@ -41,7 +41,7 @@ image:
 
 
 아래는 주식, 집값, 맥주 생산량등 여러 그래프 예시입니다.
-![graphs.png](./images/stationary/graphs.png){:, .align-center}
+![graphs.png](/images/stationary/graphs.png){:, .align-center}
 
 
 이 중에 정상성 그래프는 (d) 미국 집 판매량 그래프입니다. 딱 봐도 불규칙적인걸 볼 수 있는 정상성인 그래프입니다.
@@ -55,12 +55,12 @@ image:
 
 위에서 보았던 구글 주가 종가의 연도별 그래프, 연도별 그래프의 차분 그래프(차분에 대한 설명은 나중에 합니다)입니다.
 
-![auto_correlation.png](./images/stationary/auto_correlation.png){:, .align-center}
+![auto_correlation.png](/images/stationary/auto_correlation.png){:, .align-center}
   
 
 ACF(Auto-correlation Function) plot과 PACF(Partial Auto-Correlation Function) plot을 보고 확인하면 됩니다. 시간 별 correlation을 구해 시간 간격 간에 상관이 있는지 알 수 있습니다. 즉 과거 시간에 현재가 영향받는지(상관이 있는지)를 알 수 있기에 정상성 판단이 가능합니다. 위에 두 그래프를 각각 ACF plot을 그려보면 아래와 같습니다.
 
-![diff.png](./images/stationary/diff.png){:, .align-center}
+![diff.png](/images/stationary/diff.png){:, .align-center}
 
 왼쪽은 정상성 시계열 데이터이며, 오른쪽은 정상성이 아닌 시계열 데이터입니다. 자세히 설명하자면, 파란색 영역이 p-value 0.05(95%)이하를 나타낸다. 즉, 왼쪽 그래프는 파란색 영역이 넘어가므로 정상성이라고 말할 수 있습니다. 오른쪽 그래프는 차분을 구해 파란색 영역안으로 시계열 데이터를 만들었습니다. 파란색 영역 안으로 그래프가 바뀐 것을 볼 수 있습니다. 즉 정상성 시계열을 비정상성 그래프로 만들었습니다.
 

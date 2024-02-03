@@ -59,7 +59,7 @@ def modify_lines(args, lines):
         if line.startswith("![["):
             img_file = re.search(r"\[\[(.+?)\]\]", line).group(1)
             old_img_path = f"{args.old_dir}/attachments/{img_file}"
-            new_img_path = f".{IMG_BASE}/{img_file}"
+            new_img_path = f"{IMG_BASE}/{img_file}"
             lines[i] = f"![{img_file}]({new_img_path}){{:, .align-center}}\n"
             args.img_paths.append([old_img_path, new_img_path])
 
@@ -110,7 +110,7 @@ def _main(path):
     lines = create_blocks(args, lines)
     for old_img_path, new_img_path in args.img_paths:
         print(f"{old_img_path}", ">>>>>>", new_img_path)
-        shutil.copy(f"{old_img_path}", f"{new_img_path}")
+        shutil.copy(f"{old_img_path}", f".{new_img_path}")
 
     new_md_path = f"./_posts/{args.date}-{args.keyword}.md"
     with open(new_md_path, "w") as f:
