@@ -10,7 +10,6 @@ image:
      thumbnail: /images/crossformer/main.png
 ---
 
----
 기존 트랜스포머 기반 모델들은 cross time dependency 있다는 문제가 있습니다. crossformer는 이러한 cross time dependency를 해결하면서 cross dimension dependency 또한 개선하면서 기존 트랜스포머에 비해 성능을 개선했습니다. 그렇다면 어떻게 해결했는지 살펴봅시다.
 
 <!--more-->

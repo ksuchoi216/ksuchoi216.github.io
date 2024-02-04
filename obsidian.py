@@ -52,7 +52,7 @@ def get_args(args, lines):
 
     args.tags = tags
     # print("tags:", tags)
-    lines = lines[args.slice_index :]
+    lines = lines[args.slice_index+1 :]
     return args, lines
 
 
