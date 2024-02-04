@@ -8,19 +8,27 @@ import glob
 
 FOLDER_DIR = f"./obsidian"
 CURRENT_DIR = "/Users/KC/Library/CloudStorage/GoogleDrive-ksuchoi216@gmail.com/My Drive/My Code/ksuchoi216.github.io"
+# OBSIDIAN_DIR = "/Users/KC/Library/Mobile\ Documents/iCloud\~md\~obsidian/Documents/FallForward/posts"
 OBSIDIAN_DIR = (
-    "/Users/KC/Library/Mobile\ Documents/iCloud\~md\~obsidian/Documents/posts"
+    "/Users/KC/Library/Mobile Documents/iCloud~md~obsidian/Documents/FallForward/posts"
 )
 
 
 def copy_files():
-    paths = glob.glob(f"{OBSIDIAN_DIR}/**")
-    print(paths)
-    for path in paths:
-        if not os.path.exists(FOLDER_DIR):
-            os.makedirs(FOLDER_DIR)
+    if not os.path.exists(FOLDER_DIR):
+        os.makedirs(FOLDER_DIR)
 
-        shutil.copy(path, f"{CURRENT_DIR}/notion")
+    paths = glob.glob(f"{OBSIDIAN_DIR}/**")
+    # print(f"paths: {paths}")
+    for path in paths:
+        foldername = os.path.basename(path)
+        print(f"foldername: {foldername}")
+        try:
+            shutil.copytree(
+                path, f"{CURRENT_DIR}/obsidian/{foldername}", dirs_exist_ok=True
+            )
+        except Exception as e:
+            print(e)
 
 
 def get_args(args, lines):
@@ -43,7 +51,7 @@ def get_args(args, lines):
             args.title = re.search(r"title:\s*(.*)", line).group(1)
 
     args.tags = tags
-    print("tags:", tags)
+    # print("tags:", tags)
     lines = lines[args.slice_index :]
     return args, lines
 
@@ -58,10 +66,14 @@ def modify_lines(args, lines):
     for i, line in enumerate(lines):
         if line.startswith("![["):
             img_file = re.search(r"\[\[(.+?)\]\]", line).group(1)
+            img_file = os.path.basename(img_file)
+
+            print(f"img_file: {img_file}")
             old_img_path = f"{args.old_dir}/attachments/{img_file}"
             new_img_path = f"{IMG_BASE}/{img_file}"
             lines[i] = f"![{img_file}]({new_img_path}){{:, .align-center}}\n"
             args.img_paths.append([old_img_path, new_img_path])
+            print(f"old_img_path: {old_img_path}, new_img_path: {new_img_path}")
 
     return args, lines
 
@@ -78,12 +90,15 @@ def create_blocks(args, lines):
     for tag in args.tags:
         tag = f"   - {tag}\n"
         tag_block.append(tag)
-
-    img_block = [
-        "image:\n",
-        f"     path: {args.img_paths[0][1]}\n",
-        f"     thumbnail: {args.img_paths[0][1]}\n",
-    ]
+    # print(f"args.img_paths: {args.img_paths}")
+    if args.img_paths:
+        img_block = [
+            "image:\n",
+            f"     path: {args.img_paths[0][1]}\n",
+            f"     thumbnail: {args.img_paths[0][1]}\n",
+        ]
+    else:
+        img_block = []
     end_block = [
         "---\n",
         "\n",
@@ -94,12 +109,13 @@ def create_blocks(args, lines):
     return lines
 
 
-def _main(path):
-    args = SimpleNamespace()
+def _main(args, path):
     args.old_md_path = glob.glob(f"{path}/*.md")[0]
-    args.old_dir = os.path.dirname(args.old_md_path)
     filename = os.path.basename(args.old_md_path)
     args.keyword = re.match(r"(.+?)\.md$", filename).group(1)
+    print(f"args.keyword: {args.keyword}")
+    args.old_dir = os.path.dirname(args.old_md_path)
+
     # print(md_path, args.keyword)
     with open(args.old_md_path, "r", encoding="utf-8") as f:
         lines = f.readlines()
@@ -109,8 +125,8 @@ def _main(path):
 
     lines = create_blocks(args, lines)
     for old_img_path, new_img_path in args.img_paths:
-        print(f"{old_img_path}", ">>>>>>", new_img_path)
         shutil.copy(f"{old_img_path}", f".{new_img_path}")
+        # print(f"{old_img_path}", ">>>>>>", new_img_path)
 
     new_md_path = f"./_posts/{args.date}-{args.keyword}.md"
     with open(new_md_path, "w") as f:
@@ -118,8 +134,10 @@ def _main(path):
 
 
 if __name__ == "__main__":
-    # find folder path using glob
+
     copy_files()
     paths = glob.glob(f"{FOLDER_DIR}/**")
-    for path in paths:
-        _main(path)
+    for i, path in enumerate(paths):
+        args = SimpleNamespace()
+        print(f"path: {path}")
+        _main(args, path)
