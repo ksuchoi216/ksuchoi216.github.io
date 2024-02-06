@@ -115,10 +115,10 @@ final_out = rearrange(dim_enc, '(b seg_num) ts_d d_model -> b ts_d seg_num d_mod
 
 이렇게 시간도 잘 조합하고 차원도 잘 조합하니 다른 트랜스포머 보다 좋은 결과를 다양한 데이터에서 냈습니다.
 
-![[res1.png]]
+![[ds/crossformer/attachments/res1.png]]
 DSW와 TSA가 예측 정확도에 영향을 주는 것도 확인 할 수 있습니다.
 
-![[res2.png]]
+![[ds/crossformer/attachments/res2.png]]
 ## References
 
 **Transformer Utilizing Cross-Dimension Dependency for Multivariate Time Series Forecasting**

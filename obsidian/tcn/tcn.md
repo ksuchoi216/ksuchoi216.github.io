@@ -39,15 +39,16 @@ TCN는 CNN을 변형시켜 RNN, LSTM을 뛰어넘은 모델입니다.
 
 동작은 보통의 CNN과 동일합니다. 물론 논문에서는 아래와 같이 1D CNN의 skip connection을 option으로 제안하긴 하지만 결국 TCN-Normalization-Activation-Dropout 같은 기존과 비슷한 구조를 가집니다.
 
-![[Pasted image 20240205190726.png]]
+![[structure.png]]
+
 ## Results
 
 아래 그래프를 보시면 입력 시계열 길이가 늘어도 TCN이 성능이 좋은 것을 알 수 있습니다.
 
-![[Pasted image 20240205190746.png]]
+![[ds/tcn/attachments/res1.png]]
 
 또한 Accuarcy관점에서 봐도 LSTM, GRU를 압도합니다.
-![[Pasted image 20240205190806.png]]
+![[ds/tcn/attachments/res2.png]]
 
 물론 LSTM은 시계열적 특징을 잘 잡아냅니다. 그래서 이후 TCN+LSTM 이나 CNN+LSTM같은 시계열 데이터 특징을 추출하는 TCN, CNN 모델과 LSTM을 결합하여 예측하는 모델도 많이 연구되었습니다.
 

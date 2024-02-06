@@ -3,7 +3,7 @@ excerpt_separator: <!--more-->
 date: 2024-02-03
 category: time-series
 tags: 
-title: 뒤로도 예측 해볼 수 있지 않을까?backcasting NBEATS
+title: 뒤로도 예측 해볼 수 있지 않을까?(backcast) NBEATS
 ---
 거의 모든 시계열 예측은 forecast라는 앞을 예측을 기반으로 만들어졌다. 
 그렇다면 backcast라는 현재 기준으로 뒤를 예측을 활용하면 좋지 않을까?
