@@ -10,7 +10,7 @@ title: 시간도 섞고 피쳐도 섞는 crossformer
 
 <!--more-->
 
-![[posts/crossformer/attachments/main.png]]
+![[ds/crossformer/attachments/main.png]]
 ## Why crossformer is important?
 
 인트로에서 이야기 했듯이 cross time dependency를 해결한 모델이 crossformer 입니다. 그렇다면 cross time dependency가 무엇일까요?

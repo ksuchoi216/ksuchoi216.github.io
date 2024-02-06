@@ -2,7 +2,7 @@
 excerpt_separator: <!--more-->
 category: time-series
 tags:
-  - basic
+  - stat
 date: 2024-02-03
 title: 시간에 따라 변하는 시계열 데이터 판단 - 정상성
 ---

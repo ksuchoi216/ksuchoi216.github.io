@@ -61,7 +61,7 @@ Auto-correlation은 **lagged time(t-1, t-2, ..)에 대해 correlation coefficien
 
 디코더는 인코더 정보와 합계 2개의 Auto correlation을 통해 마지막 feed forward로 최종 예측하는 형태입니다. Trend와 cyclic 데이터 정보를 활용하기 위해 skip connection으로 최종 예측에 반영합니다.
 
-![[main.png]]
+![[ds/autoformer/attachments/main.png]]
 
 트랜스포머를 자세히 설명하지 않았지만 시계열 데이터간에 관계를 계산하기 위해 Query, Key, Value라는 개념이 있습니다. 단순하게 말하자면, 어떻게 시계열 데이터끼리 여러 경우의 수를 matrix 형태로 조합해 계산할까하다가 아 3개 matrix로 행렬 곱으로 잘 조합해서 관계 score을 구해 어떤 데이터끼리 더 영향이 있는 가를 계산합니다.
 

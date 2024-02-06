@@ -14,7 +14,7 @@ title: 통계 기반 예측 기본 - 아리마 ARIMA
 
 <!--more-->
 
-![[main.png]]
+![[ds/arima/attachments/main.png]]
 ## ARIMA
 
 ARIMA 모델을 이해하기 위해 영어 약자를 풀어 설명하면 쉬워요. \ AutoRegressive Integrated Moving Average = AutoRegressive + Moving Average를 합친 모델이구나. \ 우린 이제 Autoregressive 모델과 Moving average 모델이 무엇인지 알기만 하면 됩니다.

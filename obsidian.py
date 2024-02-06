@@ -10,7 +10,7 @@ FOLDER_DIR = f"./obsidian"
 CURRENT_DIR = "/Users/KC/Library/CloudStorage/GoogleDrive-ksuchoi216@gmail.com/My Drive/My Code/ksuchoi216.github.io"
 # OBSIDIAN_DIR = "/Users/KC/Library/Mobile\ Documents/iCloud\~md\~obsidian/Documents/FallForward/posts"
 OBSIDIAN_DIR = (
-    "/Users/KC/Library/Mobile Documents/iCloud~md~obsidian/Documents/FallForward/posts"
+    "/Users/KC/Library/Mobile Documents/iCloud~md~obsidian/Documents/FallForward/ds"
 )
 
 
