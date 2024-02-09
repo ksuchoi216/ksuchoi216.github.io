@@ -143,12 +143,12 @@ def _main(args, path):
 
 if __name__ == "__main__":
 
-    copy_files(OBSIDIAN_DIR_POSTS)
-    paths = glob.glob(f"{FOLDER_DIR}/**")
-    for i, path in enumerate(paths):
-        args = SimpleNamespace()
-        print(f"path: {path}")
-        _main(args, path)
+    # copy_files(OBSIDIAN_DIR_POSTS)
+    # paths = glob.glob(f"{FOLDER_DIR}/**")
+    # for i, path in enumerate(paths):
+    #     args = SimpleNamespace()
+    #     print(f"path: {path}")
+    #     _main(args, path)
 
     copy_files(OBSIDIAN_DIR_PAPERS, selected_folder=True)
     args = SimpleNamespace()

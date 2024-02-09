@@ -80,11 +80,11 @@ plugins:
   - jekyll-feed
   - jekyll-paginate
 
-# Collections
-collections:
-  courses:
-    output: true
-    permalink: /:collection/:path/
+# # Collections
+# collections:
+#   courses:
+#     output: true
+#     permalink: /:collection/:path/
 
 defaults:
   # Post defaults
@@ -96,13 +96,13 @@ defaults:
       comments: true
       share: true
   # # Recipe defaults
-  - scope:
-      path: "_courses"
-      type: courses
-    values:
-      layout: post
-      comments: true
-      share: true
+  # - scope:
+  #     path: "_courses"
+  #     type: courses
+  #   values:
+  #     layout: post
+  #     comments: true
+  #     share: true
 
 # Site Author
 author:

@@ -8,8 +8,8 @@
   url: /categories/
 - title: Tags
   url: /tags/
-- title: Courses
-  url: /courses/
+# - title: Courses
+  # url: /courses/
 - title: Search
   url: /search/
 - title: About Me
