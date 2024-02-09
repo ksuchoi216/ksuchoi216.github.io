@@ -7,8 +7,6 @@ layout: page
 <div class="entries-{{ page.entries_layout | default: 'list' }}">
   {%- if site.plugins contains 'jekyll-paginate' and page.paginate or site.gems contains 'jekyll-paginate' and
   page.paginate -%}
-
-  <h1 id="page-title" class="page-title p-name"> Recent Posts </h1>
   {%- comment -%}
   Add paginator.posts loop if jekyll-paginate plugin is enabled
   and page.paginate == true
@@ -17,17 +15,4 @@ layout: page
   {%- else -%}
   {% include posts-limit.html %}
   {%- endif -%}
-
-  <h1 id="page-title" class="page-title p-name"> Course </h1>
-  {% for category in site.categories %}
-  {% if category[0] == "Course" %}
-
-  {% for entry in category.last %}
-  {% include entry.html %}
-  {% endfor %}
-  {% endif %}
-
-  {% endfor %}
-
-
 </div>

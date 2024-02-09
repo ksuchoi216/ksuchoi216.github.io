@@ -1,31 +1,319 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.3">Jekyll</generator><link href="http://localhost:4000/atom.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2024-01-21T20:32:52+09:00</updated><id>http://localhost:4000/atom.xml</id><title type="html">시계열랩</title><subtitle>Time-series is all you need</subtitle><author><name>시계열랩</name><email>ksuchoi216@gmail.com</email></author><entry><title type="html">Autoformer</title><link href="http://localhost:4000/data-science/2023/01/21/autoformer.html" rel="alternate" type="text/html" title="Autoformer" /><published>2023-01-21T00:00:00+09:00</published><updated>2023-01-21T00:00:00+09:00</updated><id>http://localhost:4000/data-science/2023/01/21/autoformer</id><content type="html" xml:base="http://localhost:4000/data-science/2023/01/21/autoformer.html"><![CDATA[<p>일단 Autoformer는 기존에 시계열 예측에 사용된 트랜스포머 모델에 시계열 순서 정보를 잃어버리는 고질적 문제를 해결하기 위해 제안되었습니다. 트랜스포머 계열은 시계열 데이터 본래 특징을 잃어버립니다. 시간 순서대로 연결되어 있는 데이터가 시계열 데이터인데 이러한 정보를 트랜스포머 모델들은 반영하지 못합니다. 그렇다면 어떻게 autoformer가 해결했는지 탐험해보겠습니다.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.3">Jekyll</generator><link href="http://localhost:4000/atom.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2024-02-09T17:53:25+09:00</updated><id>http://localhost:4000/atom.xml</id><title type="html">시계열랩</title><subtitle>Time-series is all you need</subtitle><author><name>시계열랩</name><email>ksuchoi216@gmail.com</email></author><entry><title type="html">시계열 Transformer 보다 Linear mixer가 더 좋아 TSMixer</title><link href="http://localhost:4000/time-series/2024/02/07/tsmixer.html" rel="alternate" type="text/html" title="시계열 Transformer 보다 Linear mixer가 더 좋아 TSMixer" /><published>2024-02-07T00:00:00+09:00</published><updated>2024-02-07T00:00:00+09:00</updated><id>http://localhost:4000/time-series/2024/02/07/tsmixer</id><content type="html" xml:base="http://localhost:4000/time-series/2024/02/07/tsmixer.html"><![CDATA[<p>Transformer가 GPT로 뛰어난 성능을 냈지만 일반적인 시계열 데이터에서 Transformer 모델보단 MLP가 성능이 더 좋라고 이야기하는 논문인 TSMixer를 살펴봅시다.</p>
+
+<!--more-->
+<p><img src="/images/tsmixer/tsmixer_main.png" alt="tsmixer_main.png" class="align-center" /></p>
+<h2 id="1-이-방법이-이루고자-한-것은why">1. 이 방법이 이루고자 한 것은(Why)?</h2>
+<p><img src="/images/tsmixer/abs.png" alt="abs.png" class="align-center" />
+이 논문이 나오기 전 시계열 예측 연구는 NLP에서 대유행시킨 transformer를 이용한 시계열 예측이 전반적인 연구 였었습니다. 이러한 NLP에서 사용하는 transformer는 문장이라는 추상적 데이터를 이해하고 관계성을 찾아가며 시계열 예측을 하기 위해 사용합니다. 하지만 일반적인 시계열 예측에서는 이러한 추상적인 데이터가 아니라 int, float인 데이터 자체의 이해가 필요하지 않는 데이터이기에 적절하지 않습니다.
+다시 말해 transformer보다 linearly connection되어 있는 MLP(multi linear perceptron)이 더 시계열에 적합하는 이야기를 이 논문에서 이야기합니다. 그렇다면 어떻게 MLP를 적용했는지 계속해서 설명드리겠습니다.</p>
+
+<p>참고로, Transformer는 추상적인 데이터를 인코더 레이어를 거치면서 데이터 간에 관련성을 추출하며 데이터를 이해합니다. 그렇게 추출된 특징을 가지고 예측하는 모델입니다.</p>
+
+<h2 id="2-접근-방식의-핵심-요소는-무엇이었습니까what-how">2. 접근 방식의 핵심 요소는 무엇이었습니까(What-How)?</h2>
+<p>시계열 예측을 잘하기 위해 Transformer은 입력에 대해 잘 조합해서 새로운 특징 벡터를 만들어냅니다. 시계열 예측에서는 서로 다른 시간간에 조합과 서로 다른 특징간 조합 2가지로 나눌 수 있습니다. 이 논문에서는 어떻게 잘 조합했을까요?</p>
+
+<p>먼저 그림 부터 보시면 Mixing Layer라고 Time-mixing MLP와 Feature-mixing MLP를 한 Layer라고 생각합니다. 
+<img src="/images/tsmixer/mixer.png" alt="mixer.png" class="align-center" /></p>
+
+<p>Time-mixing MLP은 데이터를 입력을 같은 시간이면서 서로 다른 특징을 가지고 있는 데이터를 MLP에 넣어 학습하는 모델입니다. 다시 말해, 시간을 잘 섞는 MLP입니다.
+Feature-mixing MLP는 데이터 입력을 같은 특징을 가지면서 서로 다른 시간에 데이터를 MLP에 넣어 학습하는 모델입니다. 다시 말해, 특징을 잘 섞는 MLP입니다.
+<img src="/images/tsmixer/mlp_block.png" alt="mlp_block.png" class="align-center" />
+왼쪽이 time mixing MLP며 오른쪽이 feature mixing MLP입니다.</p>
+
+<p>이러한 Time mixing MLP, Feature-mixing MLP을 여러번 통과한 데이터는 마지막에 특징을 추출하면서 최종적으로 예측 값에 가까이 가기 위해 temporal projection MLP를 사용합니다. 구조상으로는 time mixing MLP와 크게 다르지 않습니다.
+<img src="/images/tsmixer/temp_proj.png" alt="temp_proj.png" class="align-center" /></p>
+
+<p>정리하자면, TSMixer는 서로다른 시간, 서로다른 특징을 조합하는 각각 모델을 이용해 잘 섞어서 예측을 잘 해볼려는 모델입니다.</p>
+
+<h2 id="3-그래서-어떤-결과를-냈나요so-what">3. 그래서 어떤 결과를 냈나요(So what)?</h2>
+
+<p>결론만 말씀드리자면, former계열(시계열 Transformer)를 Multivariate 예측에서 압도적인 성능을 냅니다.
+물론 데이터에 따라 목적에 따라 성능은 다르지만, 흔히 시계열 예측에서 많이 사용하는 데이터에서는 성능이 좋다는 이야기입니다.
+더 놀라운 것은 TSMixer는 단순한 MLP 조합이기 때문에 연산량이나 속도 면에서 매우 뛰어납니다.</p>
+
+<p><img src="/images/tsmixer/res.png" alt="res.png" class="align-center" /></p>
+
+<h2 id="4-참고-자료">4. 참고 자료</h2>
+<ul>
+  <li>2023 11 TSMixer An All-MLP Architecture for Time Series Forecasting</li>
+</ul>]]></content><author><name>시계열랩</name><email>ksuchoi216@gmail.com</email></author><category term="time-series" /><category term="ts" /><summary type="html"><![CDATA[Transformer가 GPT로 뛰어난 성능을 냈지만 일반적인 시계열 데이터에서 Transformer 모델보단 MLP가 성능이 더 좋라고 이야기하는 논문인 TSMixer를 살펴봅시다.]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/images/tsmixer/tsmixer_main.png" /><media:content medium="image" url="http://localhost:4000/images/tsmixer/tsmixer_main.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">시간에 따라 변하는 시계열 데이터 판단 - 정상성</title><link href="http://localhost:4000/time-series/2024/02/03/stationary.html" rel="alternate" type="text/html" title="시간에 따라 변하는 시계열 데이터 판단 - 정상성" /><published>2024-02-03T00:00:00+09:00</published><updated>2024-02-03T00:00:00+09:00</updated><id>http://localhost:4000/time-series/2024/02/03/stationary</id><content type="html" xml:base="http://localhost:4000/time-series/2024/02/03/stationary.html"><![CDATA[<p>시계열 분석 및 예측에 기초 중 기초, 정상성에 대해 알아봅시다.
+이 글을 읽는다면 아래 내용을 얻어가게 됩니다.</p>
+
+<ul>
+  <li>정상성이 무엇인지 그리고 왜 필요한지</li>
+  <li>어떻게 정상성을 확인 할 수 있는지</li>
+  <li>정상성인 데이터를 비정상성으로 만드는 법</li>
+</ul>
 
 <!--more-->
 
+<p>들어가기 전에, 새로운 용어가 나왔을 때는 어원이나 한자를 보는게 이해에 도움이 됩니다.
+한자로는 정할 정에 항상 항을 항상 변하지 않는다(영어로는 station 머물러 있는 느낌)라고 이해하면 쉽습니다.</p>
+
+<h2 id="1-정상성">1. 정상성</h2>
+
+<p><strong>정상성(Stationary)이란?</strong>
+먼저 결론부터 말하겠습니다. <strong>시간에 영향 받지 않는 시계열(정상성)은 예측</strong>이 불가능합니다.</p>
+
+<p><strong>정상성은 과거 시간에 영향 받지 않음을 나타내는 통계량</strong>입니다. 현재가 과거 시간에 영향을 받는지는 시계열 예측에 있어 중요합니다. 왜냐하면 시계열 예측은 과거의 패턴이 현재에도 유지되어 동일하거나 비슷하게 나타난다라고 가정을 하기 때문입니다.</p>
+
+<p>예를 들면, 내년도 소비 패턴을 예측한다면, 과거 소비 패턴이 내년에도 영향을 미쳐야 예측이 가능할 것이다. 반대로 말하면 과거 소비 패턴이 미래와 상관없다면 미래 예측 자체가 불가능합니다.</p>
+
+<p>또 다른 예시를 들자면, 여름에 증가하고 봄 가을에 줄어드는 전기 사용량을 보면 1년을 주기로 반복되는 계절성(Seasonality)이 있기에 정상성이지 않으며 시계열 예측을 할 수 있습니다.</p>
+
+<p>반대로 노이즈는 어떠합니까? 노이즈는 어느 시간 대나 랜덤하게 일정합니다. 내가 하루 전에 노이즈가 오늘 노이즈에 영향을 주지 않습니다. 그래서 노이즈는 정상성이라고 말할 수 있습니다.</p>
+
+<p>다시 처음으로 돌아가자면 <strong>비정상성</strong>이라는 말은 쉽게 말해 노이즈가 아니고 과거로 부터 미래를 예측 가능한 시계열 데이터라는 말이라고 할 수도 있습니다.</p>
+
+<p>아래는 주식, 집값, 맥주 생산량등 여러 그래프 예시입니다.
+<img src="/images/stationary/graphs.png" alt="graphs.png" class="align-center" /></p>
+
+<p>이 중에 정상성 그래프는 (d) 미국 집 판매량 그래프입니다. 딱 봐도 불규칙적인걸 볼 수 있는 정상성인 그래프입니다.</p>
+
+<p><strong>Q) 정상성이 왜 중요한가요?</strong>
+여기까지 잘 읽고 이해했다면, 이 질문에 쉽게 답변할 수 있을 것입니다. 답은 미래에 예측 가능한 시계열 데이터인가를 판별할 수 있기 때문입니다. 랜덤 노이즈(정상성)를 예측할 수 있습니까? 당연히 NO입니다.</p>
+
+<p>그렇다면 직관적인 판단 말고 어떻게 정상성을 확인 할 수 있을까요?</p>
+
+<p>위에서 보았던 구글 주가 종가의 연도별 그래프, 연도별 그래프의 차분 그래프(차분에 대한 설명은 나중에 합니다)입니다.</p>
+
+<p><img src="/images/stationary/auto_correlation.png" alt="auto_correlation.png" class="align-center" /></p>
+
+<p>ACF(Auto-correlation Function) plot과 PACF(Partial Auto-Correlation Function) plot을 보고 확인하면 됩니다. 시간 별 correlation을 구해 시간 간격 간에 상관이 있는지 알 수 있습니다. 즉 과거 시간에 현재가 영향받는지(상관이 있는지)를 알 수 있기에 정상성 판단이 가능합니다. 위에 두 그래프를 각각 ACF plot을 그려보면 아래와 같습니다.</p>
+
+<p><img src="/images/stationary/diff.png" alt="diff.png" class="align-center" /></p>
+
+<p>왼쪽은 정상성 시계열 데이터이며, 오른쪽은 정상성이 아닌 시계열 데이터입니다. 자세히 설명하자면, 파란색 영역이 p-value 0.05(95%)이하를 나타낸다. 즉, 왼쪽 그래프는 파란색 영역이 넘어가므로 정상성이라고 말할 수 있습니다. 오른쪽 그래프는 차분을 구해 파란색 영역안으로 시계열 데이터를 만들었습니다. 파란색 영역 안으로 그래프가 바뀐 것을 볼 수 있습니다. 즉 정상성 시계열을 비정상성 그래프로 만들었습니다.</p>
+
+<p>Q) <strong>만약 정상성인 시계열 데이터를 다룬다면 어떻게 해야할까요?</strong>
+위에 답이 있습니다. 답부터 말하자면 차분(differencing)을 하면 됩니다. 차분은 정상성이 아닌(non-sationary) 시계열 데이터를 만드는 가장 쉬운 방법입니다. 위에 구글 주가 종가 그래프의 ACF 그래프를 보면 자연스럽게 알 수 있었습니다.</p>
+
+<h2 id="2-지금까지-배운-것-복습">2. 지금까지 배운 것 복습!</h2>
 <ul>
-  <li><a href="#1-what-is-autoformer">1. What is Autoformer?</a>
-    <ul>
-      <li><a href="#11-transformer">1.1. Transformer</a></li>
-      <li><a href="#12-auto-correlation">1.2. Auto-correlation</a></li>
-      <li><a href="#13-series-decomposition">1.3. Series Decomposition</a></li>
-    </ul>
-  </li>
-  <li><a href="#2-how-does-it-work">2. How does it work?</a></li>
-  <li><a href="#3-details">3. Details</a>
-    <ul>
-      <li><a href="#31-series-decomposition-block">3.1. Series decomposition block</a></li>
-      <li><a href="#32-auto-correlation-block">3.2. Auto correlation block</a></li>
-    </ul>
-  </li>
-  <li><a href="#4-result">4. Result</a></li>
-  <li><a href="#5-summary">5. Summary</a>
-    <ul>
-      <li><a href="#51-reference">5.1. Reference</a></li>
-    </ul>
-  </li>
+  <li>정상성(시간에 따라 변화하지 않는다)인 시계열 데이터이면 예측이 가능하다.</li>
+  <li>만약 정상성이 확보되지 않는 시계열 데이터라면, 차분을 이용해 정상성을 확보해보자.</li>
 </ul>
 
-<h2 id="1-what-is-autoformer">1. What is Autoformer?</h2>
+<h2 id="3-참고-자료">3. 참고 자료</h2>
+<p>시계열 예측에 있어 바이블인 Rob Hyndman 교수님의 책 ‘Forecasting principles and practice 3rd’ 내용을 바탕으로 내용을 구성했습니다.
+<a href="https://otexts.com/fpp3/stationarity.html">출처는 fpp3 예제 내용을 참고했다.</a></p>]]></content><author><name>시계열랩</name><email>ksuchoi216@gmail.com</email></author><category term="time-series" /><category term="stat" /><summary type="html"><![CDATA[시계열 분석 및 예측에 기초 중 기초, 정상성에 대해 알아봅시다. 이 글을 읽는다면 아래 내용을 얻어가게 됩니다. 정상성이 무엇인지 그리고 왜 필요한지 어떻게 정상성을 확인 할 수 있는지 정상성인 데이터를 비정상성으로 만드는 법]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/images/stationary/graphs.png" /><media:content medium="image" url="http://localhost:4000/images/stationary/graphs.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">뒤로도 예측 해볼 수 있지 않을까?(backcast) NBEATS</title><link href="http://localhost:4000/time-series/2024/02/03/nbeats.html" rel="alternate" type="text/html" title="뒤로도 예측 해볼 수 있지 않을까?(backcast) NBEATS" /><published>2024-02-03T00:00:00+09:00</published><updated>2024-02-03T00:00:00+09:00</updated><id>http://localhost:4000/time-series/2024/02/03/nbeats</id><content type="html" xml:base="http://localhost:4000/time-series/2024/02/03/nbeats.html"><![CDATA[<p>거의 모든 시계열 예측은 forecast라는 앞을 예측을 기반으로 만들어졌다. 
+그렇다면 backcast라는 현재 기준으로 뒤를 예측을 활용하면 좋지 않을까?
+즉, NBEATS에서는 forecast과 backcast을 잘 활용하면 더 예측을 향상시키고 싶어했다.
+그렇다면 어떻게 활용하는지 알아보자.</p>
+
+<!--more-->
+
+<h2 id="1-이루고자-한-것은-무엇인가요">1. 이루고자 한 것은 무엇인가요?</h2>
+<p>거의 모든 시계열 예측은 forecast라는 앞을 예측을 기반으로 만들어졌다. 
+그렇다면 backcast라는 현재 기준으로 뒤를 예측을 활용하면 좋지 않을까?
+즉, NBEATS에서는 forecast과 backcast을 잘 활용하면 더 예측을 향상시키고 싶어했다.
+그렇다면 어떻게 활용하는지 알아보자.
+<img src="/images/nbeats/nbeats.png" alt="nbeats.png" class="align-center" /></p>
+
+<h2 id="2-접근-방식의-핵심-요소는-무엇인가요">2. 접근 방식의 핵심 요소는 무엇인가요?</h2>
+<p>위에서도 언급했듯이 forecast와 backcast를 Linear(FCNN)을 통해 예측합니다. 
+아래는 GenericBlock의 코드와 논문에서 언급한 그림(빨간 박스 부분)입니다.
+<img src="/images/nbeats/genericblock.png" alt="genericblock.png" class="align-center" /></p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">GenericBlock</span><span class="p">(</span><span class="n">Block</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="n">self</span><span class="p">,</span>
+        <span class="n">units</span><span class="p">,</span>
+        <span class="n">thetas_dim</span><span class="p">,</span>
+        <span class="n">device</span><span class="p">,</span>
+        <span class="n">backcast_length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">forecast_length</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="n">nb_harmonics</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nf">super</span><span class="p">(</span><span class="n">GenericBlock</span><span class="p">,</span> <span class="n">self</span><span class="p">).</span><span class="nf">__init__</span><span class="p">(</span>
+            <span class="n">units</span><span class="p">,</span> <span class="n">thetas_dim</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">backcast_length</span><span class="p">,</span> <span class="n">forecast_length</span>
+        <span class="p">)</span>
+
+        <span class="n">self</span><span class="p">.</span><span class="n">backcast_fc</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="nc">Linear</span><span class="p">(</span><span class="n">thetas_dim</span><span class="p">,</span> <span class="n">backcast_length</span><span class="p">)</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">forecast_fc</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="nc">Linear</span><span class="p">(</span><span class="n">thetas_dim</span><span class="p">,</span> <span class="n">forecast_length</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="c1"># no constraint for generic arch.
+</span>        <span class="n">x</span> <span class="o">=</span> <span class="nf">super</span><span class="p">(</span><span class="n">GenericBlock</span><span class="p">,</span> <span class="n">self</span><span class="p">).</span><span class="nf">forward</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="n">theta_b</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">theta_b_fc</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">theta_f</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">theta_f_fc</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="n">backcast</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">backcast_fc</span><span class="p">(</span><span class="n">theta_b</span><span class="p">)</span>  <span class="c1"># generic. 3.3.
+</span>        <span class="n">forecast</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">forecast_fc</span><span class="p">(</span><span class="n">theta_f</span><span class="p">)</span>  <span class="c1"># generic. 3.3.
+</span>
+        <span class="k">return</span> <span class="n">backcast</span><span class="p">,</span> <span class="n">forecast</span>
+</code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+</code></pre></div></div>
+
+<p><strong>이렇게 나온 backcast와 forecast을 어떻게 활용할까요?</strong>
+일단 과거예측값(backcast)는 과거 실제값을 빼주어 계속 되는 block에 넣어줍니다.  다시말해 아래 식처럼 실제 값과 위에 Genericblock을 이용하여 나온 예측 값을 빼주어 다음 블록 입력으로 넣어줍니다.
+\(x_{next} = true_{backcast} - pred_{backcast}\)
+이게 무슨 의미가 있냐면, 다음 블록에게 “과거 예측을 해보니 이정도 오류가 있었어 오류가 줄어들는 방향으로 학습해보자”라고 이야기하는 것입니다. 만약 이렇게 입력을 넣지 않으면 다음 블록은 스스로 판단해야합니다. 한 마디로 다음 블록에 오류까지 계산해서 떠먹여주는 것이지요.</p>
+
+<p><img src="/images/nbeats/backcast_block_.png" alt="backcast_block_.png" class="align-center" />
+그림으로 보면 더 명확해집니다. 표시한 것처럼 error를 계산해 넣어줍니다.</p>
+
+<p>한편 미래예측값(forecast)는 실제 예측을 위해 차곡차곡 모아서 최종 예측에 반영합니다. residual connection을 이용해 모두 모아서 반영합니다.</p>
+
+<p><img src="/images/nbeats/forecast_block.png" alt="forecast_block.png" class="align-center" /></p>
+
+<p>논문에서는 3가지 버전의 block이 있습니다. 이들을 잘 조합하면 더 좋은 결과를 낼 수 있다고 합니다.
+seasonality block은 다름이 아니라 seasonality가 계절적으로 주기성을 띄는 성분이므로 이것을 반영하기 위해 주기함수인 사인함수(sin wave)으로 모델링합니다.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">seasonality_model</span><span class="p">(</span><span class="n">thetas</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">thetas</span><span class="p">.</span><span class="nf">size</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="n">thetas</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="sh">"</span><span class="s">thetas_dim is too big.</span><span class="sh">"</span>
+    <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">p</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span> <span class="k">if</span> <span class="n">p</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="nf">else </span><span class="p">(</span><span class="n">p</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">p</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">s1</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">tensor</span><span class="p">(</span>
+        <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">([</span><span class="n">np</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="p">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">i</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="n">p1</span><span class="p">)])</span>
+    <span class="p">).</span><span class="nf">float</span><span class="p">()</span>  <span class="c1"># H/2-1
+</span>    <span class="n">s2</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">tensor</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">([</span><span class="n">np</span><span class="p">.</span><span class="nf">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="p">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">i</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="n">p2</span><span class="p">)])).</span><span class="nf">float</span><span class="p">()</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">cat</span><span class="p">([</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">thetas</span><span class="p">.</span><span class="nf">mm</span><span class="p">(</span><span class="n">S</span><span class="p">.</span><span class="nf">to</span><span class="p">(</span><span class="n">device</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>Trend block은 trend를 계산하기 위해 $t^i$을 계산해 지수 증가되는 부분을 모델링합니다.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">trend_model</span><span class="p">(</span><span class="n">thetas</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">thetas</span><span class="p">.</span><span class="nf">size</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="mi">4</span><span class="p">,</span> <span class="sh">"</span><span class="s">thetas_dim is too big.</span><span class="sh">"</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">tensor</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">([</span><span class="n">t</span><span class="o">**</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="n">p</span><span class="p">)])).</span><span class="nf">float</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">thetas</span><span class="p">.</span><span class="nf">mm</span><span class="p">(</span><span class="n">T</span><span class="p">.</span><span class="nf">to</span><span class="p">(</span><span class="n">device</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h2 id="3-결과는-어떤가요">3. 결과는 어떤가요?</h2>
+<p>결과적으로 I+G 즉 모든 걸 잘 조합한게 성능이 좋았습니다. 물론 tourism 데이터에서는 G 모델이 성능이 좋았습니다.
+<img src="/images/nbeats/res.png" alt="res.png" class="align-center" /></p>
+
+<p>아래와 같은 점이 이 논문은 신선했습니다.</p>
+<ul>
+  <li>backcast를 활용한다는 점</li>
+  <li>모든 블록 결과값의 residual connection으로 예측에 반영한다는 점.</li>
+</ul>
+
+<h2 id="4-참고-자료">4. 참고 자료</h2>
+<p>2019 855 N-BEATS NEURAL BASIS EXPANSION ANALYSIS FOR INTERPRETABLE TIME SERIES FORECASTING</p>]]></content><author><name>시계열랩</name><email>ksuchoi216@gmail.com</email></author><category term="time-series" /><summary type="html"><![CDATA[거의 모든 시계열 예측은 forecast라는 앞을 예측을 기반으로 만들어졌다. 그렇다면 backcast라는 현재 기준으로 뒤를 예측을 활용하면 좋지 않을까? 즉, NBEATS에서는 forecast과 backcast을 잘 활용하면 더 예측을 향상시키고 싶어했다. 그렇다면 어떻게 활용하는지 알아보자.]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/images/nbeats/nbeats.png" /><media:content medium="image" url="http://localhost:4000/images/nbeats/nbeats.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">시간도 섞고 피쳐도 섞는 crossformer</title><link href="http://localhost:4000/time-series/2024/02/03/crossformer.html" rel="alternate" type="text/html" title="시간도 섞고 피쳐도 섞는 crossformer" /><published>2024-02-03T00:00:00+09:00</published><updated>2024-02-03T00:00:00+09:00</updated><id>http://localhost:4000/time-series/2024/02/03/crossformer</id><content type="html" xml:base="http://localhost:4000/time-series/2024/02/03/crossformer.html"><![CDATA[<p>기존 트랜스포머 기반 모델들은 cross time dependency 있다는 문제가 있습니다. crossformer는 이러한 cross time dependency를 해결하면서 cross dimension dependency 또한 개선하면서 기존 트랜스포머에 비해 성능을 개선했습니다. 그렇다면 어떻게 해결했는지 살펴봅시다.</p>
+
+<!--more-->
+
+<p><img src="/images/crossformer/main.png" alt="main.png" class="align-center" /></p>
+<h2 id="why-crossformer-is-important">Why crossformer is important?</h2>
+
+<p>인트로에서 이야기 했듯이 cross time dependency를 해결한 모델이 crossformer 입니다. 그렇다면 cross time dependency가 무엇일까요?
+<img src="/images/crossformer/time_dep.png" alt="time_dep.png" class="align-center" />
+왼쪽 그림과 같이 데이터를 처리할 때 같은 시간대로 잘라서 입력값으로 반영합니다. 여기서 같은 시간대라는 제약이 걸립니다. 현재는 토요일이고 하루 후 일요일 전기 수요 예측을 한다고 가정하고, 전기 수요 시계열 데이터, 날씨 시계열 데이터가 있다고 가정해봅시다. 미래 전기 수요 예측할 때 꼭 같은 날 수요일 수요 데이터와 시점이 일치한 수요일 날씨 데이터가 들어가야할까요?</p>
+
+<p>이 논문은 여기서 의문을 가집니다. 미래를 예측할 때 수요일 날씨가 아니라 목요일 금요일 날씨가 들어가면 안되는 건가?라는 생각입니다.</p>
+
+<p>다른 시간대의 데이터를 넣는다는 생각 즉 이 논문에서는 DSW와 TSA로 해결합니다. cross dependency를 해결합니다.</p>
+
+<p>그렇다면 DSW와 TSA가 무엇일까요?</p>
+
+<h2 id="what-is-conformer">What is conformer?</h2>
+
+<p>conformer는 시계열 데이터를 잘라서 임베딩(벡터형태로 만드는)하는 <strong>DSW(dimension-segment-wise embedding)</strong>과 실제로 transformer을 구현하는 <strong>TSA(two-stage-attention)</strong>이 있습니다. 이 TSA 트랜스포머는 간단히 말해 DSW를 통해 나누어진 time segment들을 잘 섞는 cross time 부분과 feature들을 잘 섞는 cross dimension 부분으로 총 2개 stage로 구성된 attention을 사용합니다.</p>
+
+<p>쉽게 말해, time segment를 만들어 서로다른 time의 조합을 만들어서 학습하고 feature의 조합을 만들어 학습하는 구조라고 이해하시면 됩니다.</p>
+
+<p>그러면 좀 더 자세히 DSW와 TSA를 이해해보죠</p>
+
+<h2 id="how-does-it-work">How does it work?</h2>
+
+<h3 id="dsw">DSW</h3>
+
+<p>DSW은 시계열 데이터를 time segment(시간을 기준으로 자름)를 만들어 embedding한다고 했습니다.
+<img src="/images/crossformer/dsw.png" alt="dsw.png" class="align-center" />
+아래 그림과 같이 Segment length만큼 seq_y를 선택하여 Feed forward에 넣어 차원을 줄여 embedding을 합니다. 여기서 중요한 것은 DSW 의미입니다. DSW는 time segment를 만들어 새로운 축을 만든 것과 같습니다. 단순하게 이야기하자면 시간 축으로 잘 잘라 벡터화 만들었나고 이해하시면 됩니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">DSW_embedding</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">seg_len</span><span class="p">,</span> <span class="n">d_model</span><span class="p">):</span>
+        <span class="nf">super</span><span class="p">(</span><span class="n">DSW_embedding</span><span class="p">,</span> <span class="n">self</span><span class="p">).</span><span class="nf">__init__</span><span class="p">()</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">seg_len</span> <span class="o">=</span> <span class="n">seg_len</span>
+
+        <span class="n">self</span><span class="p">.</span><span class="n">linear</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="nc">Linear</span><span class="p">(</span><span class="n">seg_len</span><span class="p">,</span> <span class="n">d_model</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">batch</span><span class="p">,</span> <span class="n">ts_len</span><span class="p">,</span> <span class="n">ts_dim</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">shape</span>
+
+        <span class="n">x_segment</span> <span class="o">=</span> <span class="nf">rearrange</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="sh">'</span><span class="s">b (seg_num seg_len) d -&gt; (b d seg_num) seg_len</span><span class="sh">'</span><span class="p">,</span> <span class="n">seg_len</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">seg_len</span><span class="p">)</span>
+        <span class="n">x_embed</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">linear</span><span class="p">(</span><span class="n">x_segment</span><span class="p">)</span>
+        <span class="n">x_embed</span> <span class="o">=</span> <span class="nf">rearrange</span><span class="p">(</span><span class="n">x_embed</span><span class="p">,</span> <span class="sh">'</span><span class="s">(b d seg_num) d_model -&gt; b d seg_num d_model</span><span class="sh">'</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">batch</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">ts_dim</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">x_embed</span>
+</code></pre></div></div>
+
+<h3 id="tsa">TSA</h3>
+
+<p>TSA는 말 그대로 2개의 stage가 존재하는데 cross time과 cross dimension입니다.</p>
+
+<p><strong>[cross time stage]</strong></p>
+
+<p>말 그대로 시간 segment를 잘 섞어 주는 부분이라고 보시면 됩니다. 어떻게 섞을 것이냐라고 하면 차원을 조정해서 self-attention의 입력인 Query, Key, Value로 각각 넣게 됩니다.</p>
+
+<p>차원 조정을 텐서로 보자면 (batch, feat, seg, emb) → ((batch, feat), <strong>seg,</strong> emb) 이런 식으로 합니다. 여기서 batch는 batch size이며 feat은 feature dimension이고 seg은 time segment 개수이고 emb은 embedding dimension입니다.</p>
+
+<p>뒤에 seg, emb만 잘 섞기 위해 이렇게 차원을 조정하는 구나 정도 이해하지면 됩니다. time segment가 잘 섞이므로 cross time이라고 논문에서는 이야기하고 있습니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c1">#Cross Time Stage: Directly apply MSA to each dimension
+</span>  <span class="n">batch</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+  <span class="n">time_in</span> <span class="o">=</span> <span class="nf">rearrange</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="sh">'</span><span class="s">b ts_d seg_num d_model -&gt; (b ts_d) seg_num d_model</span><span class="sh">'</span><span class="p">)</span>
+  <span class="n">time_enc</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">time_attention</span><span class="p">(</span>
+      <span class="n">time_in</span><span class="p">,</span> <span class="n">time_in</span><span class="p">,</span> <span class="n">time_in</span>
+  <span class="p">)</span>
+  <span class="n">dim_in</span> <span class="o">=</span> <span class="n">time_in</span> <span class="o">+</span> <span class="n">self</span><span class="p">.</span><span class="nf">dropout</span><span class="p">(</span><span class="n">time_enc</span><span class="p">)</span>
+  <span class="n">dim_in</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">norm1</span><span class="p">(</span><span class="n">dim_in</span><span class="p">)</span>
+  <span class="n">dim_in</span> <span class="o">=</span> <span class="n">dim_in</span> <span class="o">+</span> <span class="n">self</span><span class="p">.</span><span class="nf">dropout</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="nc">MLP1</span><span class="p">(</span><span class="n">dim_in</span><span class="p">))</span>
+  <span class="n">dim_in</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">norm2</span><span class="p">(</span><span class="n">dim_in</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong>[cross dimension stage]</strong></p>
+
+<p>비슷한 방식으로 차원 조정을 통해 self-attention 입력을 조정해서 차원을 잘 섞습니다.</p>
+
+<p>((batch, feat), seg, emb) → ((batch, seg), <strong>feat,</strong> emb) 이런 식으로 잘 섞어 줍니다.</p>
+
+<p>위와 마찬가지로 batch는 batch size이며 feat은 feature dimension이고 seg은 time segment 개수이고 emb은 embedding dimension입니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#Cross Dimension Stage: use a small set of learnable vectors to aggregate and distribute messages to build the D-to-D connection
+</span><span class="n">dim_send</span> <span class="o">=</span> <span class="nf">rearrange</span><span class="p">(</span><span class="n">dim_in</span><span class="p">,</span> <span class="sh">'</span><span class="s">(b ts_d) seg_num d_model -&gt; (b seg_num) ts_d d_model</span><span class="sh">'</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">batch</span><span class="p">)</span>
+<span class="n">batch_router</span> <span class="o">=</span> <span class="nf">repeat</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">router</span><span class="p">,</span> <span class="sh">'</span><span class="s">seg_num factor d_model -&gt; (repeat seg_num) factor d_model</span><span class="sh">'</span><span class="p">,</span> <span class="n">repeat</span> <span class="o">=</span> <span class="n">batch</span><span class="p">)</span>
+<span class="n">dim_buffer</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">dim_sender</span><span class="p">(</span><span class="n">batch_router</span><span class="p">,</span> <span class="n">dim_send</span><span class="p">,</span> <span class="n">dim_send</span><span class="p">)</span>
+<span class="n">dim_receive</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">dim_receiver</span><span class="p">(</span><span class="n">dim_send</span><span class="p">,</span> <span class="n">dim_buffer</span><span class="p">,</span> <span class="n">dim_buffer</span><span class="p">)</span>
+<span class="n">dim_enc</span> <span class="o">=</span> <span class="n">dim_send</span> <span class="o">+</span> <span class="n">self</span><span class="p">.</span><span class="nf">dropout</span><span class="p">(</span><span class="n">dim_receive</span><span class="p">)</span>
+<span class="n">dim_enc</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">norm3</span><span class="p">(</span><span class="n">dim_enc</span><span class="p">)</span>
+<span class="n">dim_enc</span> <span class="o">=</span> <span class="n">dim_enc</span> <span class="o">+</span> <span class="n">self</span><span class="p">.</span><span class="nf">dropout</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="nc">MLP2</span><span class="p">(</span><span class="n">dim_enc</span><span class="p">))</span>
+<span class="n">dim_enc</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">norm4</span><span class="p">(</span><span class="n">dim_enc</span><span class="p">)</span>
+
+<span class="n">final_out</span> <span class="o">=</span> <span class="nf">rearrange</span><span class="p">(</span><span class="n">dim_enc</span><span class="p">,</span> <span class="sh">'</span><span class="s">(b seg_num) ts_d d_model -&gt; b ts_d seg_num d_model</span><span class="sh">'</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">batch</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>물론 차원 복잡도를 낮추기 위해 cross dimension stage에서 router를 사용합니다.</p>
+
+<p>아래 그림을 보시면 (b)가 router를 쓰기전 (c)가 router를 쓴 후인데 일종에 고정된 파라미터 수 안에서 입력을 만들어 경우의 수를 줄였습니다. attention에서 입력으로 Query, Key, Value로 각각 넣게 되는데 Query은 모든 조합이 아니라 router를 이용해 만든 입력을 넣게 됩니다.</p>
+
+<p><img src="/images/crossformer/cross_dim.png" alt="cross_dim.png" class="align-center" /></p>
+<h2 id="result">Result</h2>
+
+<p>이렇게 시간도 잘 조합하고 차원도 잘 조합하니 다른 트랜스포머 보다 좋은 결과를 다양한 데이터에서 냈습니다.</p>
+
+<p><img src="/images/crossformer/res1.png" alt="res1.png" class="align-center" />
+DSW와 TSA가 예측 정확도에 영향을 주는 것도 확인 할 수 있습니다.</p>
+
+<p><img src="/images/crossformer/res2.png" alt="res2.png" class="align-center" /></p>
+<h2 id="references">References</h2>
+
+<p><strong>Transformer Utilizing Cross-Dimension Dependency for Multivariate Time Series Forecasting</strong></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>@inproceedings{wang2021crossformer,
+  title = {CrossFormer: A Versatile Vision Transformer Hinging on Cross-scale Attention},
+  author = {Wenxiao Wang and Lu Yao and Long Chen and Binbin Lin and Deng Cai and Xiaofei He and Wei Liu},
+  booktitle = {International Conference on Learning Representations, {ICLR}},
+  url = {&lt;https://openreview.net/forum?id=_PHymLIxuI&gt;},
+  year = {2022}
+}
+</code></pre></div></div>]]></content><author><name>시계열랩</name><email>ksuchoi216@gmail.com</email></author><category term="time-series" /><category term="transformer" /><summary type="html"><![CDATA[기존 트랜스포머 기반 모델들은 cross time dependency 있다는 문제가 있습니다. crossformer는 이러한 cross time dependency를 해결하면서 cross dimension dependency 또한 개선하면서 기존 트랜스포머에 비해 성능을 개선했습니다. 그렇다면 어떻게 해결했는지 살펴봅시다.]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/images/crossformer/main.png" /><media:content medium="image" url="http://localhost:4000/images/crossformer/main.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">“Auto-correlation을 활용한 트랜스포머: Autoformer”</title><link href="http://localhost:4000/time-series/2024/01/28/autoformer.html" rel="alternate" type="text/html" title="“Auto-correlation을 활용한 트랜스포머: Autoformer”" /><published>2024-01-28T00:00:00+09:00</published><updated>2024-01-28T00:00:00+09:00</updated><id>http://localhost:4000/time-series/2024/01/28/autoformer</id><content type="html" xml:base="http://localhost:4000/time-series/2024/01/28/autoformer.html"><![CDATA[<p>일단 Autoformer는 기존에 시계열 예측에 사용된 트랜스포머 모델에 시계열 순서 정보를 잃어버리는 고질적 문제를 해결하기 위해 제안되었습니다. 트랜스포머 계열은 시계열 데이터 본래 특징을 잃어버립니다. 시간 순서대로 연결되어 있는 데이터가 시계열 데이터인데 이러한 정보를 트랜스포머 모델들은 반영하지 못합니다. 그렇다면 어떻게 autoformer가 해결했는지 탐험해보겠습니다.</p>
+
+<!--more-->
+<h2 id="what-is-autoformer">What is Autoformer?</h2>
 
 <p>Autoformer는 Auto-correlation + Transformer을 결합한 모델입니다. 시계열 데이터를 더 잘 학습하기 위해 Series Decomposition 적용합니다.</p>
 
@@ -37,7 +325,7 @@
   <li>Series Decomposition</li>
 </ul>
 
-<h3 id="11-transformer">1.1. Transformer</h3>
+<h3 id="transformer">Transformer</h3>
 
 <p>Transformer는 Self-attention을 통해 문장을 이해하고 해석하는데 특화된 모델입니다. GPT에 T가 트랜스포머 사용된 것을 알 수 있듯이 텍스트 데이터에 잘쓰이는 모델입니다.</p>
 
@@ -45,7 +333,7 @@
 
 <p>정리하자면, 트랜스포머는 <strong>시계열 데이터(t, t-1, t-2 …)간에 관계를 잘 찾아 학습하는 장점</strong>이 있습니다. 예를 들어 t와 t-1 관계 혹은 t-2와 t-5, t-6, t-7의 관계라던지 여러 조합을 통해 무엇이 더 연관있는지 찾아 낼 수 있습니다.</p>
 
-<h3 id="12-auto-correlation">1.2. Auto-correlation</h3>
+<h3 id="auto-correlation">Auto-correlation</h3>
 
 <p>Auto-correlation은 <strong>lagged time(t-1, t-2, ..)에 대해 correlation coefficients</strong>를 구합니다. 쉽게 말해 시간 지연된 데이터와 상관 관계가 어느 정도 인지 -1부터 1까지 숫자로 나타낸 값입니다.</p>
 
@@ -53,11 +341,11 @@
 
 <p>정리하자면, 자기 상관은 시간 지연에 대해 상관 관계를 계산합니다.</p>
 
-<h3 id="13-series-decomposition">1.3. Series Decomposition</h3>
+<h3 id="series-decomposition">Series Decomposition</h3>
 
 <p>마지막으로 Series Decomposition이 남았습니다. 간단합니다. 시계열 분석에 기초라고 할 수 있는 Decomposition과 크게 다르지 않습니다. 있는 그대로 시계열 데이터를 사용하면 분석 혹은 예측이 부정확하기 때문에 <strong>추세(trend), 계절성(seasonal), 그 외(remainer)로 나누어 예측할려고 시계열 데이터를 분해</strong>합니다.</p>
 
-<p>여기서 추세(꾸준히 증가하거나 감소), 계절성(계절마다 주기적으로 영향), 그외(나머지)를 의미합니다. 물론 cyclic이다 아니면 다른 것들로 분해하기도 합니다.  미국과 캐나다에서 개발한 X-11 decomposition, ARIMA를 위한 SEATS decomposition 등 다양한 시계열 분해가 존재하지만 이 논문에서는 추세, 계절성에만 집중합니다.</p>
+<p>여기서 추세(꾸준히 증가하거나 감소), 계절성(계절마다 주기적으로 영향), 그외(나머지)를 의미합니다. 물론 cyclic이다 아니면 다른 것들로 분해하기도 합니다. 미국과 캐나다에서 개발한 X-11 decomposition, ARIMA를 위한 SEATS decomposition 등 다양한 시계열 분해가 존재하지만 이 논문에서는 추세, 계절성에만 집중합니다.</p>
 
 <p>다시 3가지 개념을 정리해봅시다.</p>
 
@@ -71,7 +359,7 @@
 
 <p>그렇다면 논문을 한 번 들여다 보면서 추가적으로 설명 드리겠습니다. 사실 아래 그림을 이해하면 다 이해한 것입니다.</p>
 
-<h2 id="2-how-does-it-work">2. How does it work?</h2>
+<h2 id="how-does-it-work">How does it work?</h2>
 
 <p>트랜스 포머 구조인 Encoder(해석하는 부분)와 Decoder(예측하는 부분)로 구성되어 있습니다(물론 딱 해석과 예측하는 부분이라고 할 수 없지만 이해를 위해 러프하게 설명합니다).</p>
 
@@ -79,21 +367,21 @@
 
 <p>인코더는 Auto correlation을 계산해서 Feed forward을 시계열 데이터를 해석하는 부분입니다. 중간에 본래 시계열 데이터 정보를 잃지 않기 위해 skip connectiond을 사용합니다.</p>
 
-<p>디코더는 인코더 정보와 합계 2개의 Auto correlation을 통해 마지막 feed forward로 최종 예측하는 형태입니다. Trend와 cyclic 데이터 정보를 활용하기 위해 skip connection으로 최종 예측에 반영합니다.
-<img src="/images/autoformer/01_main_figure.png" alt="main_figure" class="align-center" /></p>
+<p>디코더는 인코더 정보와 합계 2개의 Auto correlation을 통해 마지막 feed forward로 최종 예측하는 형태입니다. Trend와 cyclic 데이터 정보를 활용하기 위해 skip connection으로 최종 예측에 반영합니다.</p>
+
+<p><img src="/images/autoformer/main.png" alt="main.png" class="align-center" /></p>
 
 <p>트랜스포머를 자세히 설명하지 않았지만 시계열 데이터간에 관계를 계산하기 위해 Query, Key, Value라는 개념이 있습니다. 단순하게 말하자면, 어떻게 시계열 데이터끼리 여러 경우의 수를 matrix 형태로 조합해 계산할까하다가 아 3개 matrix로 행렬 곱으로 잘 조합해서 관계 score을 구해 어떤 데이터끼리 더 영향이 있는 가를 계산합니다.</p>
 
 <p>이 논문에서는 이 시계열 데이터 간에 관계성을 Auto correlation을 반영해서 계산해보자가 핵심입니다. 물론 Series Decomposition을 통해 시계열 데이터를 좀 더 정확하게 분석하고 예측하게 만들었습니다.</p>
 
-<h2 id="3-details">3. Details</h2>
+<h2 id="details">Details</h2>
 
-<h3 id="31-series-decomposition-block">3.1. Series decomposition block</h3>
+<h3 id="series-decomposition-block">Series decomposition block</h3>
 
 <p>흔히 복잡한 시간 패턴을 학습하기 위해 시계열을 추세(trend), 계절성(seasonality)으로 분리합니다.</p>
 
-\[X_t = AvgPool(Padding(X)), X\in \mathbb{R}^{L \times d} \\
-X_s = X - X_t\]
+\[X_t = AvgPool(Padding(X)), X\in \mathbb{R}^{L \times d} \\ X_s = X - X_t\]
 
 <p>Average Pooling은 사실 Moving average랑 다르지 않습니다. 그러므로 Average Pooling을 통해 데이터를 Smoothing해 트랜드를 계산 할 수 있습니다.</p>
 
@@ -119,10 +407,11 @@ X_s = X - X_t\]
 
 <p>위와 같이 코딩할 수 있습니다.</p>
 
-<h3 id="32-auto-correlation-block">3.2. Auto correlation block</h3>
+<h3 id="auto-correlation-block">Auto correlation block</h3>
 
-<p>자세한 방법은 아래 그림처럼 논문에 잘 설명 되어 있기에 참조하시기 바랍니다.
-<img src="/images/autoformer/02_auto_correlation_block.png" alt="auto_correlation_block" class="align-center" /></p>
+<p>자세한 방법은 아래 그림처럼 논문에 잘 설명 되어 있기에 참조하시기 바랍니다.</p>
+
+<p><img src="/images/autoformer/auto-correlation.png" alt="auto-correlation.png" class="align-center" /></p>
 
 <p>위에도 말씀드렸듯이, Auto correlation을 계산하는 부분이 핵심이라고 했습니다. 흥미로운 부분만 언급 드리겠습니다.</p>
 
@@ -140,12 +429,13 @@ X_s = X - X_t\]
 
 <p>위와 같이 torch.fft.rfft를 통해 간단히 계산할 수 있습니다.</p>
 
-<h2 id="4-result">4. Result</h2>
+<h2 id="result">Result</h2>
 
-<p>아래 표를 보시면 알 수 있듯이 Informer, logtrans, reformer같은 transformer계열보다 MSE, MAE가 낮은 것을 확인 할 수 있습니다. 즉 시계열 정보를 잃어버리지 않고 잘 추출해서 트랜스포머를 구성한 것을 유추해볼 수 있습니다.
-<img src="/images/autoformer/03_result.png" alt="result" class="align-center" /></p>
+<p>아래 표를 보시면 알 수 있듯이 Informer, logtrans, reformer같은 transformer계열보다 MSE, MAE가 낮은 것을 확인 할 수 있습니다. 즉 시계열 정보를 잃어버리지 않고 잘 추출해서 트랜스포머를 구성한 것을 유추해볼 수 있습니다.</p>
 
-<h2 id="5-summary">5. Summary</h2>
+<p><img src="/images/autoformer/result.png" alt="result.png" class="align-center" /></p>
+
+<h2 id="summary">Summary</h2>
 
 <p>다시 정리해봅시다.</p>
 
@@ -155,69 +445,513 @@ X_s = X - X_t\]
 
 <p>다른 장점은 없나요? auto-corration과 series decomposition을 사용했기 때문에 시계열적 특징도 적절히 추출 되었습니다.</p>
 
-<h3 id="51-reference">5.1. Reference</h3>
+<h3 id="reference">Reference</h3>
+<p>논문 - <a href="https://proceedings.neurips.cc/paper/2021/hash/bcc0d400288793e8bdcd7c19a8ac0c2b-Abstract.html">https://proceedings.neurips.cc/paper/2021/hash/bcc0d400288793e8bdcd7c19a8ac0c2b-Abstract.html</a></p>]]></content><author><name>시계열랩</name><email>ksuchoi216@gmail.com</email></author><category term="time-series" /><category term="transformer" /><summary type="html"><![CDATA[일단 Autoformer는 기존에 시계열 예측에 사용된 트랜스포머 모델에 시계열 순서 정보를 잃어버리는 고질적 문제를 해결하기 위해 제안되었습니다. 트랜스포머 계열은 시계열 데이터 본래 특징을 잃어버립니다. 시간 순서대로 연결되어 있는 데이터가 시계열 데이터인데 이러한 정보를 트랜스포머 모델들은 반영하지 못합니다. 그렇다면 어떻게 autoformer가 해결했는지 탐험해보겠습니다.]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/images/autoformer/main.png" /><media:content medium="image" url="http://localhost:4000/images/autoformer/main.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">1D CNN을 더 길게 만들어보자 TCN</title><link href="http://localhost:4000/time-series/2024/01/10/tcn.html" rel="alternate" type="text/html" title="1D CNN을 더 길게 만들어보자 TCN" /><published>2024-01-10T00:00:00+09:00</published><updated>2024-01-10T00:00:00+09:00</updated><id>http://localhost:4000/time-series/2024/01/10/tcn</id><content type="html" xml:base="http://localhost:4000/time-series/2024/01/10/tcn.html"><![CDATA[<p>TCN은 CNN kernel의 간격을 넓혀 보다 넓은 시계열 데이터를 사용하기 위해 만들었습니다.
+CNN가 어떻게 다른지 한 번 보시죠.</p>
 
-<p>!Autoformer</p>
+<!--more-->
+<h2 id="why-tcn-is-suggested">Why TCN is suggested?</h2>
 
-<p><a href="https://proceedings.neurips.cc/paper/2021/hash/bcc0d400288793e8bdcd7c19a8ac0c2b-Abstract.html"></a></p>]]></content><author><name>시계열랩</name><email>ksuchoi216@gmail.com</email></author><category term="data-science" /><category term="time-series" /><category term="transformer" /><summary type="html"><![CDATA[일단 Autoformer는 기존에 시계열 예측에 사용된 트랜스포머 모델에 시계열 순서 정보를 잃어버리는 고질적 문제를 해결하기 위해 제안되었습니다. 트랜스포머 계열은 시계열 데이터 본래 특징을 잃어버립니다. 시간 순서대로 연결되어 있는 데이터가 시계열 데이터인데 이러한 정보를 트랜스포머 모델들은 반영하지 못합니다. 그렇다면 어떻게 autoformer가 해결했는지 탐험해보겠습니다.]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/images/autoformer/00_main.png" /><media:content medium="image" url="http://localhost:4000/images/autoformer/00_main.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">시간에 따라 변하는 시계열 데이터 판단 - 정상성</title><link href="http://localhost:4000/data-science/2023/01/13/stationary.html" rel="alternate" type="text/html" title="시간에 따라 변하는 시계열 데이터 판단 - 정상성" /><published>2023-01-13T00:00:00+09:00</published><updated>2023-01-13T00:00:00+09:00</updated><id>http://localhost:4000/data-science/2023/01/13/stationary</id><content type="html" xml:base="http://localhost:4000/data-science/2023/01/13/stationary.html"><![CDATA[<p>시계열 분석 및 예측에 기초 중 기초, 정상성에 대해 알아봅시다.
-이 글을 읽는다면 아래 내용을 얻어가게 됩니다.</p>
+<p>연구진은 RNN, LSTM같은 recurrent networks보다 성능이 더 뛰어난 변형된 CNN을 개발했습니다.</p>
 
+<p>아시다시피 CNN은 1989년도에 Yann LeCun 처음 제안되어 이미지 쪽에 혁신적인 성과를 낸 모델입니다.</p>
+
+<p>하지만 CNN 자체는 localization(커널로 주변과 같이 계산하는 특징)로 1D CNN으로 시계열을 학습할 수 있지 않을까라는 시도가 있었습니다. 하지만 결과적으로 시계열에 있어서 RNN, LSTM 같은 시계열적 특성을 반영한 모델들이 더 뛰어난 성능을 보여 CNN은 시계열쪽에서 적용되지 못했습니다.</p>
+
+<p>TCN는 CNN을 변형시켜 RNN, LSTM을 뛰어넘은 모델입니다.</p>
+
+<h2 id="what-is-tcn">What is TCN?</h2>
+
+<p>결론만 말하자면, CNN의 convolution 간격을 늘린 모델입니다. 그림으로 이해하면 간편합니다.</p>
+
+<p><img src="/images/tcn/main.png" alt="main.png" class="align-center" /></p>
+
+<p>그림처럼 TCN 2 Layer가 존재한다고하면 CNN과 다르게 kernel 개별 간격이 넓게 가져갑니다.</p>
+
+<p>예를 들어, [1,2,3,4,5,6,7]라는 데이터가 있다고 가정하면 4 데이터를 중심으로 kernel size가 3이라면 [3, 4, 5]이렇게 convolution을 합니다. TCN는 간격을 2이라고하면 [2, 4, 6]이렇게 convolution을 합니다.</p>
+
+<p>왜 이렇게 CNN에 간격을 늘렸을까요?</p>
+
+<p>답은 간단합니다. 시계열 데이터에서 CNN을 이용하면 근처에 있는 데이터만 convolution하기 때문에 시계열 특징을 잘 찾아내지 못합니다. 반대로 TCN은 보다 넓은 영역의 데이터를 이용하기 때문에 시계열 데이터에 유리합니다.</p>
+
+<h2 id="how-does-it-work">How does it work?</h2>
+
+<p>동작은 보통의 CNN과 동일합니다. 물론 논문에서는 아래와 같이 1D CNN의 skip connection을 option으로 제안하긴 하지만 결국 TCN-Normalization-Activation-Dropout 같은 기존과 비슷한 구조를 가집니다.</p>
+
+<p><img src="/images/tcn/structure.png" alt="structure.png" class="align-center" /></p>
+
+<h2 id="results">Results</h2>
+
+<p>아래 그래프를 보시면 입력 시계열 길이가 늘어도 TCN이 성능이 좋은 것을 알 수 있습니다.</p>
+
+<p><img src="/images/tcn/res1.png" alt="res1.png" class="align-center" /></p>
+
+<p>또한 Accuarcy관점에서 봐도 LSTM, GRU를 압도합니다.
+<img src="/images/tcn/res2.png" alt="res2.png" class="align-center" /></p>
+
+<p>물론 LSTM은 시계열적 특징을 잘 잡아냅니다. 그래서 이후 TCN+LSTM 이나 CNN+LSTM같은 시계열 데이터 특징을 추출하는 TCN, CNN 모델과 LSTM을 결합하여 예측하는 모델도 많이 연구되었습니다.</p>
+
+<h2 id="references">References</h2>
+<p>An Empirical Evaluation of Generic Convolutional and Recurrent Networks for Sequence Modeling</p>]]></content><author><name>시계열랩</name><email>ksuchoi216@gmail.com</email></author><category term="time-series" /><category term="cnn" /><summary type="html"><![CDATA[TCN은 CNN kernel의 간격을 넓혀 보다 넓은 시계열 데이터를 사용하기 위해 만들었습니다. CNN가 어떻게 다른지 한 번 보시죠.]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/images/tcn/main.png" /><media:content medium="image" url="http://localhost:4000/images/tcn/main.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">통계 기반 예측 기본 - 아리마 ARIMA</title><link href="http://localhost:4000/time-series/2023/12/06/arima.html" rel="alternate" type="text/html" title="통계 기반 예측 기본 - 아리마 ARIMA" /><published>2023-12-06T00:00:00+09:00</published><updated>2023-12-06T00:00:00+09:00</updated><id>http://localhost:4000/time-series/2023/12/06/arima</id><content type="html" xml:base="http://localhost:4000/time-series/2023/12/06/arima.html"><![CDATA[<p>이 글을 읽는다면 아래 내용을 얻어가게 됩니다.</p>
 <ul>
-  <li>정상성이 무엇인지 그리고 왜 필요한지</li>
-  <li>어떻게 정상성을 확인 할 수 있는지</li>
-  <li>정상성인 데이터를 비정상성으로 만드는 법</li>
+  <li>ARIMA가 무엇인지</li>
+  <li>자기회기(AR) 모델이 무엇인지</li>
+  <li>이동평균(MA) 모델이 무엇인지</li>
+  <li>ARIMA 파이썬 실행법</li>
 </ul>
 
 <!--more-->
-<p>들어가기 전에, 새로운 용어가 나왔을 때는 어원이나 한자를 보는게 이해에 도움이 됩니다.
-한자로는 정할 정에 항상 항을 항상 변하지 않는다(영어로는 station 머물러 있는 느낌)라고 이해하면 쉽습니다.</p>
 
-<h2 id="1-정상성">1. 정상성</h2>
+<p><img src="/images/arima/main.png" alt="main.png" class="align-center" /></p>
+<h2 id="arima">ARIMA</h2>
 
-<h3 id="11-정상성stationary이란">1.1. 정상성(Stationary)이란?</h3>
+<p>ARIMA 모델을 이해하기 위해 영어 약자를 풀어 설명하면 쉬워요. \ AutoRegressive Integrated Moving Average = AutoRegressive + Moving Average를 합친 모델이구나. \ 우린 이제 Autoregressive 모델과 Moving average 모델이 무엇인지 알기만 하면 됩니다.</p>
 
-<p>먼저 결론부터 말하겠습니다. <strong>시간에 영향 받지 않는 시계열(정상성)은 예측</strong>이 불가능합니다.</p>
+<h3 id="시계열-예측-모델에서-중요한-점">시계열 예측 모델에서 중요한 점?</h3>
 
-<p><strong>정상성은 과거 시간에 영향 받지 않음을 나타내는 통계량</strong>입니다. 현재가 과거 시간에 영향을 받는지는 시계열 예측에 있어 중요합니다. 왜냐하면 시계열 예측은 과거의 패턴이 현재에도 유지되어 동일하거나 비슷하게 나타난다라고 가정을 하기 때문입니다.</p>
+<p>모델은 어떤 입력을 통해 어떤 출력을 만들어 낼 수 있는 함수(박스)를 말합니다. 아래 그림과 같이 이해하면 편하죠.</p>
 
-<p>예를 들면, 내년도 소비 패턴을 예측한다면, 과거 소비 패턴이 내년에도 영향을 미쳐야 예측이 가능할 것이다. 반대로 말하면 과거 소비 패턴이 미래와 상관없다면 미래 예측 자체가 불가능합니다.
-또 다른 예시를 들자면, 여름에 증가하고 봄 가을에 줄어드는 전기 사용량을 보면 1년을 주기로 반복되는 계절성(Seasonality)이 있기에 정상성이지 않으며 시계열 예측을 할 수 있습니다.
-반대로 노이즈는 어떠합니까? 노이즈는 어느 시간 대나 랜덤하게 일정합니다. 내가 하루 전에 노이즈가 오늘 노이즈에 영향을 주지 않습니다. 그래서 노이즈는 정상성이라고 말할 수 있습니다.</p>
+<p>시계열 예측 모델도 마찬가지입니다. 어떤 입력으로 미래를 예측할 수 있을까?(모델 가정) 대답이 시계열 모델입니다. 일반적으로 어떤 입력을 쓰일까요? 과거값을 가지고 미래를 예측해보자라는 생각으로 만든 것이 자기 회기(AR) 모델입니다. 과거 예측 오차로 미래를 예측해보자가 이동 평균(MA) 모델입니다. 이 두 가지를 다 섞은게 ARIMA입니다. 그럼 하나 씩 살펴보죠.</p>
 
-<p>다시 처음으로 돌아가자면 <strong>“비정상성”</strong>이라는 말은 쉽게 말해 노이즈가 아니고 과거로 부터 미래를 예측 가능한 시계열 데이터라는 말이라고 할 수도 있습니다.</p>
+<h3 id="autoregressive자기회기-모델">Autoregressive(자기회기) 모델</h3>
 
-<p>아래는 주식, 집값, 맥주 생산량등 여러 그래프 예시입니다.
-<img src="/images/stationary/01_ts_graphs.png" alt="ts_graphs" class="align-center" /></p>
+<p>Auto(자기 스스로)+regressive(회기 모델)입니다. Auto는 Autocorrelation 처럼 시간 지연(lagged)된 값을 입력으로 들어간다는 말입니다. 시간 지연은 $y_{t-1}, y_{t-2}, \cdots$ 같은 t(현재시점)보다 뒤에 있는 과거 이야기합니다. 정리해봅시다. 쉽게 말해, Autoregressive 모델은 시간 지연 ($y_{t-1}, y_{t-2}, \cdots$)을 입력으로 하는 회기 모델입니다.</p>
 
-<p>이 중에 정상성 그래프는 (d) 미국 집 판매량 그래프입니다. 딱 봐도 불규칙적인걸 볼 수 있는 정상성인 그래프입니다.</p>
+\[y_{t} = c + \phi_{1}y_{t-1} + \phi_{2}y_{t-2} + \dots + \phi_{p}y_{t-p} + \varepsilon_{t},\]
 
-<p><strong>Q) 정상성이 왜 중요한가요?</strong></p>
+<p>이러한 모델을 AR(p) 모델이라 한다. 여기서 p는 얼만큼 시간 지연된 값을 입력으로 넣을 것인가를 나타낸다. 예를 들어 p=2이면 아래와 같은 모델을 사용합니다.</p>
 
-<p>여기까지 잘 읽고 이해했다면, 이 질문에 쉽게 답변할 수 있을 것입니다. 답은 미래에 예측 가능한 시계열 데이터인가를 판별할 수 있기 때문입니다. 랜덤 노이즈(정상성)를 예측할 수 있습니까? 당연히 NO입니다.</p>
+\[y_{t} = c + \phi_{1}y_{t-1} + \phi_{2}y_{t-2}\]
 
-<p>그렇다면 직관적인 판단 말고 어떻게 정상성을 확인 할 수 있을까요?</p>
+<h3 id="moving-average-모델">Moving average 모델</h3>
 
-<p>위에서 보았던 구글 주가 종가의 연도별 그래프, 연도별 그래프의 차분 그래프(차분에 대한 설명은 나중에 합니다)입니다.
-<img src="/images/stationary/02_google_stock_graphs.png" alt="google_stock_graphs" class="align-center" /></p>
+<p>자기회기 모델과 다르게 과거 값(시간 지연 된 값) 대신 과거 예측 에러로 회기 모델을 만듭니다. 과거 예측 에러로 회기모델을 만든다라는 말을 좀 더 쉽게 서명해봅시다.</p>
 
-<p>ACF(Auto-correlation Function) plot과 PACF(Partial Auto-Correlation Function) plot을 보고 확인하면 됩니다. 시간 별 correlation을 구해 시간 간격 간에 상관이 있는지 알 수 있습니다. 즉 과거 시간에 현재가 영향받는지(상관이 있는지)를 알 수 있기에 정상성 판단이 가능합니다. 위에 두 그래프를 각각 ACF plot을 그려보면 아래와 같습니다.
-<img src="/images/stationary/03_acf.png" alt="acf" class="align-center" /></p>
+\[y_{t} = c + \varepsilon_t + \theta_{1}\varepsilon_{t-1} + \theta_{2}\varepsilon_{t-2} + \dots + \theta_{q}\varepsilon_{t-q},\]
 
-<p>왼쪽은 정상성 시계열 데이터이며, 오른쪽은 정상성이 아닌 시계열 데이터입니다. 자세히 설명하자면, 파란색 영역이 p-value 0.05(95%)이하를 나타낸다. 즉, 왼쪽 그래프는 파란색 영역이 넘어가므로 정상성이라고 말할 수 있습니다. 오른쪽 그래프는 차분을 구해 파란색 영역안으로 시계열 데이터를 만들었습니다. 파란색 영역 안으로 그래프가 바뀐 것을 볼 수 있습니다. 즉 정상성 시계열을 비정상성 그래프로 만들었습니다.</p>
+<h3 id="arima-모델">ARIMA 모델</h3>
 
-<p>Q) <strong>만약 정상성인 시계열 데이터를 다룬다면 어떻게 해야할까요?</strong></p>
+<p>ARIMA 모델은 앞에서 설명했듯이 Autoregression 모델과 Moving Average 모델을 결합한 모델입니다. 추가적으로 데이터 자체를 차분에 대한 값도 반영합니다. 말이 어려우니 수식으로 보시죠.</p>
 
-<p>위에 답이 있습니다. 답부터 말하자면 차분(differencing)을 하면 됩니다. 차분은 정상성이 아닌(non-sationary) 시계열 데이터를 만드는 가장 쉬운 방법입니다. 위에 구글 주가 종가 그래프의 ACF 그래프를 보면 자연스럽게 알 수 있었습니다.</p>
+\[y'_{t} = c + \phi_{1}y'_{t-1} + \cdots + \phi_{p}y'*{t-p}
 
-<h2 id="2-지금까지-배운-것-복습">2. 지금까지 배운 것 복습!</h2>
+- \theta*{1}\varepsilon_{t-1} + \cdots + \theta_{q}\varepsilon_{t-q} + \varepsilon_{t}, \tag{9.1}\]
 
+<p>$y’$은 차분 값을 나타냅니다. $\phi$는 자기회기(AR) 모델의 과거 값을 말하며 $\varepsilon$은 이동평균(MA)의 과거 예측 에러라고 보시면 됩니다. 다시 말해 식을 아래와 같이 정리할 수 있습니다.</p>
+
+<p>얼마나 차분을 할래?에 대한 결정을 상수 d를 선택하여 \ \(p \rightarrow y' \rightarrow \textit{difference(차분) 결정}\)</p>
+
+<p>얼마나 과거값을 사용할래?에 대한 결정을 상수 p를 선택하여 \ \(p \rightarrow y'_{t-p} \rightarrow \textit{AR model 결정}\)</p>
+
+<p>얼마나 과거 예측 에러를 사용할래?에 대한 결정을 상수 q를 선택하여 \ \(p \rightarrow \varepsilon_{t-q} \rightarrow \textit{MA model 결정}\)</p>
+
+<h2 id="지금까지-배운-것-복습">지금까지 배운 것 복습!</h2>
+
+<p>ARIMA는 자기회기 모델(AR)과 이동평균 모델(MA) 및 차분을 조합해 예측하는 모델이다.</p>
+
+<h2 id="참고-자료">참고 자료</h2>
+<p>fpp3 - https://otexts.com/fpp3/arima.html</p>]]></content><author><name>시계열랩</name><email>ksuchoi216@gmail.com</email></author><category term="time-series" /><category term="stat" /><summary type="html"><![CDATA[이 글을 읽는다면 아래 내용을 얻어가게 됩니다. ARIMA가 무엇인지 자기회기(AR) 모델이 무엇인지 이동평균(MA) 모델이 무엇인지 ARIMA 파이썬 실행법]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/images/arima/main.png" /><media:content medium="image" url="http://localhost:4000/images/arima/main.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Papers</title><link href="http://localhost:4000/papers/2020/01/01/papers.html" rel="alternate" type="text/html" title="Papers" /><published>2020-01-01T00:00:00+09:00</published><updated>2020-01-01T00:00:00+09:00</updated><id>http://localhost:4000/papers/2020/01/01/papers</id><content type="html" xml:base="http://localhost:4000/papers/2020/01/01/papers.html"><![CDATA[<p>요즘 공부하고 있는 논문들을 정리한 목록입니다. 시계열 예측, 전력 예측 등에 관심이 있어 공부하고 있습니다.
+<!--more--></p>
+
+<p><strong>General Forecasting</strong></p>
 <ul>
-  <li>정상성(시간에 따라 변화하지 않는다)인 시계열 데이터이면 예측이 가능하다.</li>
-  <li>만약 정상성이 확보되지 않는 시계열 데이터라면, 차분을 이용해 정상성을 확보해보자.</li>
+  <li>2023 11 TSMixer An All-MLP Architecture for Time Series Fore- casting.pdf #ts
+    <ul>
+      <li>What did the authors try to accomplish?
+        <ul>
+          <li>univariate linear models can outperform deep learning</li>
+          <li>stacking MLP</li>
+        </ul>
+      </li>
+      <li>What were the key elements of the approach?
+        <ul>
+          <li>time mixing MLP: temporal patterns(same time)</li>
+          <li>feature mixing MLP: leverage covariate information</li>
+          <li>temporal projection: learn temporal patterns and map forecasting</li>
+          <li>normalisation + residual connection</li>
+          <li>![[tsmixer.png]]</li>
+        </ul>
+      </li>
+      <li>What can you use yourself?
+        <ul>
+          <li>mixer: time and feature</li>
+        </ul>
+      </li>
+      <li>What other references do you want to follow?</li>
+      <li>pdf: [[2023 11 TSMixer An All-MLP Architecture for Time Series Fore- casting.pdf]]</li>
+    </ul>
+  </li>
+  <li>Autoformer: Decomposition Transformers with Auto-Correlation for Long-Term Series Forecasting #transformer #ts
+    <ul>
+      <li>Why-What?
+        <ul>
+          <li>losing long-tem information</li>
+          <li>-&gt; decomposition with auto-correlation</li>
+        </ul>
+      </li>
+      <li>How(Key elements)?
+        <ul>
+          <li>[[autoformer.png]]</li>
+          <li>series decomposition + auto-correlation(FFT base)</li>
+        </ul>
+      </li>
+      <li>So what?
+        <ul>
+          <li>auto-correlation</li>
+          <li>series decomposition</li>
+        </ul>
+      </li>
+      <li>References?</li>
+      <li>pdf: [[2021 808 Autoformer Decomposition Transformers with Auto-Correlation for Long-Term Series Forecasting.pdf]]</li>
+    </ul>
+  </li>
+  <li>2019 855 N-BEATS NEURAL BASIS EXPANSION ANALYSIS FOR INTERPRETABLE TIME SERIES FORECASTING #ts
+    <ul>
+      <li>Why-What accomplishment?
+        <ul>
+          <li>improvement for univariate time series forecasting</li>
+        </ul>
+      </li>
+      <li>How(Key elements)?
+        <ul>
+          <li>backward and forward residual links</li>
+          <li>stack of FCNN</li>
+          <li>3 three different blocks - generic / trend / seasonality</li>
+          <li>![[Pasted image 20240205194025.png]]</li>
+        </ul>
+      </li>
+      <li>So what?
+        <ul>
+          <li>backward prediction</li>
+          <li>trend, seasonality block</li>
+        </ul>
+      </li>
+      <li>References?
+        <ul>
+          <li>pdf: [[2019 855 N-BEATS NEURAL BASIS EXPANSION ANALYSIS FOR INTERPRETABLE TIME SERIES FORECASTING.pdf]]</li>
+        </ul>
+      </li>
+      <li></li>
+    </ul>
+  </li>
 </ul>
 
-<h2 id="3-참고-자료">3. 참고 자료</h2>
+<p><strong>PV forecasting</strong></p>
+<ul>
+  <li>2019 390 A comparison of day-ahead photovoltaic power forecasting models based on T deep learning neural network #pv (CNN-LSTM)
+    <ul>
+      <li>What did the authors try to accomplish?
+        <ul>
+          <li>comparison for CNN, LSTM, CNN-LSTM</li>
+        </ul>
+      </li>
+      <li>What were the key elements of the approach?
+        <ul>
+          <li>weather data -&gt; CNN -&gt; extracted feature</li>
+          <li>power data -&gt; LSTM -&gt; prediction</li>
+          <li>fusion of CNN+LSTM</li>
+        </ul>
+      </li>
+      <li>What can you use yourself?
+        <ul>
+          <li>there are experiment settings in detail.</li>
+        </ul>
+      </li>
+      <li>What other references do you want to follow?
+        <ul>
+          <li>pdf: [[2019 390 A comparison of day-ahead photovoltaic power forecasting models based on T deep learning neural network.pdf]]</li>
+          <li>dataset: https://dkasolarcentre.com.au/download?location=alice-springs
+            <ul>
+              <li>1B dataset</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>2023 4 Short-Term Photovoltaic Power Forecasting Based on a Novel Autoformer Model #pv #transformer
+    <ul>
+      <li>What did the authors try to accomplish?
+        <ul>
+          <li>improvement of autoformer</li>
+          <li>ADAMS de-stationary attention and multi-scale framework</li>
+          <li>more extracted non stationary information</li>
+          <li>captured symmmetry inherent and non-stationairity in data patterns</li>
+        </ul>
+      </li>
+      <li>What were the key elements of the approach?
+        <ul>
+          <li>multi-scale frame work</li>
+          <li>de-stationary attention</li>
+        </ul>
+      </li>
+      <li>What can you use yourself?</li>
+      <li>What other references do you want to follow?</li>
+      <li>pdf:</li>
+    </ul>
+  </li>
+  <li>2020 106 Photovoltaic power forecasting with a hybrid deep learning approach.pdf #pv
+    <ul>
+      <li>Why(accomplishment)?
+        <ul>
+          <li>stable forecasting: not use adjacent days</li>
+          <li>CNN: non linear feature and invariant structures</li>
+          <li>LSTM: temporal feature</li>
+        </ul>
+      </li>
+      <li>What-How(Key elements)?
+        <ul>
+          <li>correlation for same hour -&gt; adjacent day is important</li>
+          <li>CNN+LSTM![[Pasted image 20240206184022.png]]</li>
+          <li>$P_{pred} = \alpha P_{CNN}+ \beta P_{LSTM}$ subject to $\alpha + \beta = 1$</li>
+        </ul>
+      </li>
+      <li>So what?
+        <ul>
+          <li>how to use CNN+LSTM for pv power forecasting</li>
+        </ul>
+      </li>
+      <li>References?
+        <ul>
+          <li>dataset: Elia. Belgium’s Electricity Transmission System Operator. Accessed: Jan. 13, 2020. [Online]. Available: https://www.elia.be/en/grid- data/power-generation/solar-pv-power-generation-data</li>
+        </ul>
+      </li>
+      <li>pdf: [[2020 106 Photovoltaic power forecasting with a hybrid deep learning approach.pdf]]</li>
+    </ul>
+  </li>
+  <li>2019 173 Day-Ahead Photovoltaic Forecasting A Comparison of the Most Effective Techniques #pv
+    <ul>
+      <li>Why-What?
+        <ul>
+          <li>forecasting depended on whether it is sunny day or cloudy day.</li>
+        </ul>
+      </li>
+      <li>How(Key elements)?
+        <ul>
+          <li>case1: [[case1 model.png]]
+            <ul>
+              <li>irr forecasting -&gt; avg irr -&gt; sunny or cloudy -&gt; power forecasting</li>
+            </ul>
+          </li>
+          <li>case2: [[case2 model.png]]
+            <ul>
+              <li>weather forecast+clear sky model -&gt; network -&gt; power forecasting</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>So what?
+        <ul>
+          <li>clear sky model</li>
+          <li>sunny or cloudy criterian</li>
+        </ul>
+      </li>
+      <li>References?
+        <ul class="task-list">
+          <li>dataset: ![[Dataset-SolarTechLab.csv]]
+            <ul class="task-list">
+              <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Bird, R.E.; Riordan, C. Simple Solar Spectral Model for Direct and Diffuse Irradiance on Horizontal and Tilted Planes at the Earth’s Surface for Cloudless Atmospheres. 1986.</li>
+            </ul>
+          </li>
+          <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Grimaccia, F.; Leva, S.; Mussetta, M.; Ogliari, E. ANN sizing procedure for the day-ahead output power forecast of a PV plant. Appl. Sci. 2017, 7, 622</li>
+        </ul>
+      </li>
+      <li>pdf: [[2019 173 Day-Ahead Photovoltaic Forecasting A Comparison of the Most Effective Techniques .pdf]]</li>
+    </ul>
+  </li>
+  <li>2020 404 A day-ahead PV power forecasting method based on LSTM-RNN model and time correlation modification under partial daily pattern prediction framework.pdf #pv (RNN-LSTM + TCM + PDPP)
+    <ul>
+      <li>What did the authors try to accomplish?
+        <ul>
+          <li>previous research has an overfitting and insufficient generation</li>
+          <li>a lack of utilising weather changes and cloud movement</li>
+          <li>how to couple between weather and electricity</li>
+        </ul>
+      </li>
+      <li>What were the key elements of the approach?
+        <ul>
+          <li>RNN-LSTM</li>
+          <li>TCM time correlation modification -&gt; day, year correlation and weather similarity</li>
+          <li>PDPP partial daily pattern prediction</li>
+        </ul>
+      </li>
+      <li>What can you use yourself?
+        <ul>
+          <li>way to compute the correlation</li>
+          <li>classification of weather or cloud patterns</li>
+        </ul>
+      </li>
+      <li>What other references do you want to follow?
+        <ul>
+          <li>pdf: [[2020 404 A day-ahead PV power forecasting method based on LSTM-RNN model and time correlation modification under partial daily pattern prediction framework 1.pdf]]</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>2021 132 Day-ahead hourly photovoltaic power forecasting using attention-based CNN-LSTM neural network embedded with multiple relevant and target variables prediction pattern #pv (CNN-LSTM with ST and LT)
+    <ul>
+      <li>What did the authors try to accomplish?
+        <ul>
+          <li>limit weather forecast data</li>
+          <li>power data is non-stationary</li>
+          <li>complex non-linearity of pv time</li>
+        </ul>
+      </li>
+      <li>What were the key elements of the approach?
+        <ul>
+          <li>merge power data with weather data</li>
+          <li>resample data for short-term and long-term</li>
+          <li>CNN(reduce dim) + LSTM</li>
+          <li>Attention</li>
+        </ul>
+      </li>
+      <li>What can you use yourself?
+        <ul>
+          <li>ST and LT</li>
+          <li>CNN + LSTM</li>
+        </ul>
+      </li>
+      <li>What other references do you want to follow?
+        <ul>
+          <li>pdf: [[2021 132 Day-ahead hourly photovoltaic power forecasting using attention- based CNN-LSTM neural network embedded with multiple relevant and target variables prediction pattern.pdf]]</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>2023 0 Improving day-ahead Solar Irradiance Time Series Forecasting by Leveraging Spatio-Temporal Context.pdf #pv #satellite
+    <ul>
+      <li>Why-What?
+        <ul>
+          <li>spatio-temporal context using satellite data</li>
+          <li>new multi-modal dataset</li>
+          <li>dayahead forecasting more difficult than 3-6 hours</li>
+        </ul>
+      </li>
+      <li>How(Key elements)? - [[satellite-transformer.png]]
+        <ul>
+          <li>vision transformer for satellite data</li>
+          <li>temporal transformer for past data</li>
+          <li>cross -&gt; temporal transformer</li>
+          <li>multiple quantile head</li>
+          <li>
+            <ul>
+              <li>positional embedding on each stage</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>So what?
+        <ul>
+          <li>satellite data</li>
+          <li>transformer</li>
+        </ul>
+      </li>
+      <li>References?
+        <ul class="task-list">
+          <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />A review of solar forecasting, its dependence on atmospheric sciences and implications for grid integration: Towards carbon neutrality. Renewable and Sustainable Energy Reviews</li>
+          <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Nielsen, A. H., Iosifidis, A., and Karstoft, H. (2021). Irradiancenet: Spatiotemporal deep learning model for satellite-derived solar irradiance short-term forecasting. Solar Energy, 228:659–669.</li>
+          <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Bone, V., Pidgeon, J., Kearney, M., and Veeraragavan, A. (2018). Intra-hour direct normal irradiance forecasting through adaptive clear-sky modelling and cloud tracking. Solar Energy, 159:852–867.</li>
+        </ul>
+      </li>
+      <li>pdf: [[2023 0 Improving day-ahead Solar Irradiance Time Series Forecasting by Leveraging Spatio-Temporal Context.pdf]]</li>
+    </ul>
+  </li>
+  <li>2021 132 Day-ahead hourly photovoltaic power forecasting using attention- based CNN-LSTM neural network embedded with multiple relevant and target variables prediction pattern #pv
+    <ul>
+      <li>Why-What?
+        <ul>
+          <li>ST and LT temporal information → CNN-LSTM for ST and LT → attention mechanizm</li>
+        </ul>
+      </li>
+      <li>pdf: [[2021 132 Day-ahead hourly photovoltaic power forecasting using attention- based CNN-LSTM neural network embedded with multiple relevant and target variables prediction pattern 1.pdf]]</li>
+    </ul>
+  </li>
+  <li>2020 680 A review and evaluation of the state-of-the-art in PV solar power forecasting Techniques and optimization #pv</li>
+</ul>
 
-<p>시계열 예측에 있어 바이블인 Rob Hyndman 교수님의 책 ‘Forecasting principles and practice 3rd’ 내용을 바탕으로 내용을 구성했습니다.</p>
+<p><strong>Anomaly detection</strong></p>
+<ul>
+  <li>2022 41 Machine Learning Schemes for Anomaly Detection in Solar Power Plants #pv #ad
+    <ul>
+      <li>Why-What?
+        <ul>
+          <li>review: ML base anomaly for pv</li>
+        </ul>
+      </li>
+      <li>How(Key elements)?
+        <ul>
+          <li>Autoencoder-LSTM</li>
+          <li>Facebook-prophet - math model(equation)</li>
+          <li>Isolation Forest
+            <ul>
+              <li>randomly selected feature -&gt; randomly sampling -&gt; tree</li>
+              <li>if sample goes the deeper, it would be anomaly</li>
+            </ul>
+          </li>
+          <li>hyperparameter selection explained.</li>
+        </ul>
+      </li>
+      <li>So what?
+        <ul>
+          <li>dataset</li>
+          <li>code in kaggle(prophet, isolation forest)</li>
+        </ul>
+      </li>
+      <li>References?
+        <ul>
+          <li>dataset- https://www.kaggle.com/datasets/anikannal/solar-power-generation-data?resource=download</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
 
-<p><a href="https://otexts.com/fpp3/stationarity.html">출처는 fpp3 예제 내용을 참고했다.</a></p>]]></content><author><name>시계열랩</name><email>ksuchoi216@gmail.com</email></author><category term="data-science" /><category term="time-series" /><summary type="html"><![CDATA[시계열 분석 및 예측에 기초 중 기초, 정상성에 대해 알아봅시다. 이 글을 읽는다면 아래 내용을 얻어가게 됩니다. 정상성이 무엇인지 그리고 왜 필요한지 어떻게 정상성을 확인 할 수 있는지 정상성인 데이터를 비정상성으로 만드는 법]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/images/stationary/00_main.png" /><media:content medium="image" url="http://localhost:4000/images/stationary/00_main.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>
+<p><strong>ESS</strong></p>
+<ul>
+  <li>2020 26 Optimal ESS Scheduling for Peak Shaving of Building Energy Using Accuracy-Enhanced Load Forecast
+    <ul>
+      <li>What did the authors try to accomplish?
+        <ul>
+          <li></li>
+        </ul>
+      </li>
+      <li>What were the key elements of the approach?</li>
+      <li>What can you use yourself?</li>
+      <li>What other references do you want to follow?</li>
+    </ul>
+  </li>
+</ul>
+
+<p><strong>Temp</strong></p>
+<ul>
+  <li>2018 162 Reinforcement Learning Based Energy Management Algorithm for Smart Energy Buildings</li>
+  <li>2019 287 Deep Reinforcement Learning for Smart Home Energy Management</li>
+  <li>2020 192 Study on deep reinforcement learning techniques for building energy consumption forecasting</li>
+  <li>2022 2 Handling Load Uncertainty during On-Peak Time via Dual ESS and LSTM with Load Data Augmentation</li>
+  <li>2019 1 Stochastic Real-time Demand Prediction for Building and Charging and Discharging Technique of ESS Based on Machine-Learning.pdf</li>
+  <li>2020 204 Short-Term Photovoltaic Power Forecasting Using an LSTM Neural Network and Synthetic Weather Forecast</li>
+  <li>2020 264 Hybrid CNN-LSTM Model for Short-Term Individual Household Load Forecasting</li>
+  <li>2019 1008 Predicting residential energy consumption using CNN-LSTM neural networks</li>
+  <li>2015 124 A hybrid short-term load forecasting with a new input selection framework</li>
+  <li>2016 695 Building Energy Load Forecasting using Deep Neural Networks</li>
+  <li>2017 2017 Short-Term Residential Load Forecasting based on LSTM Recurrent Neural Network</li>
+  <li>2023 18 Review of Family-Level Short-Term Load Forecasting and Its Application in Household Energy Management System</li>
+  <li>2021 171 Deep learning models for solar irradiance forecasting A comprehensive review</li>
+  <li>2022 17 Experimental Investigation of Variational Mode Decomposition and Deep Learning for Short-Term Multi-horizon Residential Electric Load Forecasting.pdf</li>
+  <li>2021 351 Artificial intelligence based anomaly detection of energy consumption in buildings- A review, current trends and new perspectives.pdf</li>
+  <li>2023 386 Are Transformers Effective for Time Series Forecasting?</li>
+  <li>2019 408 Day-ahead building-level load forecasts using deep learning vs. traditional T time-series techniques</li>
+  <li>2021 1 Particle Swarm Optimization Based Peak Shaving Scheme Using ESS for Reducing Electricity Tariff</li>
+  <li>2023 1 Optimal Energy System Scheduling Using A Constraint Aware Reinforcement Learning Algorithm</li>
+  <li>2018 32 Optimal Power Scheduling for a Medium Voltage ACDC Hybrid Distribution Network</li>
+  <li>2022 7 Optimization of ESS Scheduling for Cost Reduction in Commercial and Industry Customers in Korea</li>
+  <li>2020 35 MILP-PSO Combined Optimization Algorithm for an Islanded Microgrid Scheduling with Detailed Battery ESS Efficiency Model and Policy Considerations</li>
+  <li>2020 172 Multi-Sequence LSTM-RNN Deep Learning and Metaheuristics for Electric Load Forecasting</li>
+  <li>2022 2 Handling Load Uncertainty during On Peak Time via Dual ESS and LSTM with Load Data Augmentation</li>
+  <li>2020 150 Reinforcement learning for whole-building HVAC control and demand response</li>
+  <li>2023 10 Solar irradiance forecasting models using machine learning techniques and digital twin- A case study with comparison.pdf</li>
+  <li>2018 259 Deep Neural Networks and Mixed Integer Linear Optimization.pdf</li>
+  <li>2021 81 Deep sequence to sequence Bi-LSTM neural networks for day-ahead peak load forecasting</li>
+  <li>2021 213 A Review of Deep Reinforcement Learning for Smart Building Energy Management</li>
+  <li>2019 10 Development of a Two-Stage ESS-Scheduling Model for Cost Minimization Using Machine Learning-Based Load Prediction Techniques</li>
+</ul>]]></content><author><name>시계열랩</name><email>ksuchoi216@gmail.com</email></author><category term="papers" /><category term="papers" /><summary type="html"><![CDATA[요즘 공부하고 있는 논문들을 정리한 목록입니다. 시계열 예측, 전력 예측 등에 관심이 있어 공부하고 있습니다.]]></summary></entry></feed>

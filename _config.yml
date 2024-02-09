@@ -82,7 +82,7 @@ plugins:
 
 # Collections
 collections:
-  recipes:
+  courses:
     output: true
     permalink: /:collection/:path/
 
@@ -96,13 +96,13 @@ defaults:
       comments: true
       share: true
   # # Recipe defaults
-  # - scope:
-  #     path: "_recipes"
-  #     type: recipes
-  #   values:
-  #     layout: post
-  #     comments: true
-  #     share: true
+  - scope:
+      path: "_courses"
+      type: courses
+    values:
+      layout: post
+      comments: true
+      share: true
 
 # Site Author
 author:

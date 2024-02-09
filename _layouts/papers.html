@@ -1,0 +1,21 @@
+---
+layout: page
+---
+
+{{ content }}
+
+<div class="entries-{{ page.entries_layout | default: 'list' }}">
+
+
+  <!-- <h1 id="page-title" class="page-title p-name"> Research Papers </h1> -->
+  {% for category in site.categories %}
+  {% if category[0] == "papers" %}
+
+  {% for entry in category.last %}
+  {% include entry.html %}
+  {% endfor %}
+  {% endif %}
+
+  {% endfor %}
+
+</div>

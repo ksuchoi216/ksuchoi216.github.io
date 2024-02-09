@@ -1,0 +1,146 @@
+{
+  "main": {
+    "id": "7f201014572964ee",
+    "type": "split",
+    "children": [
+      {
+        "id": "eab60114cfef275f",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "0a2c733fcbd132df",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "0485974d1c1d304c",
+    "type": "mobile-drawer",
+    "children": [
+      {
+        "id": "edd2fcc936aa653f",
+        "type": "leaf",
+        "state": {
+          "type": "file-explorer",
+          "state": {
+            "sortOrder": "alphabetical"
+          }
+        }
+      },
+      {
+        "id": "b191c647785fecf0",
+        "type": "leaf",
+        "state": {
+          "type": "search",
+          "state": {
+            "query": "",
+            "matchingCase": false,
+            "explainSearch": false,
+            "collapseAll": false,
+            "extraContext": false,
+            "sortOrder": "alphabetical"
+          }
+        }
+      },
+      {
+        "id": "f53bfde569f4c7fc",
+        "type": "leaf",
+        "state": {
+          "type": "tag",
+          "state": {
+            "sortOrder": "frequency",
+            "useHierarchy": true
+          }
+        }
+      },
+      {
+        "id": "b52416b43a665288",
+        "type": "leaf",
+        "state": {
+          "type": "bookmarks",
+          "state": {}
+        }
+      }
+    ],
+    "currentTab": 0
+  },
+  "right": {
+    "id": "dc607653186fef15",
+    "type": "mobile-drawer",
+    "children": [
+      {
+        "id": "35d61f0b0a15c802",
+        "type": "leaf",
+        "state": {
+          "type": "backlink",
+          "state": {
+            "collapseAll": false,
+            "extraContext": false,
+            "sortOrder": "alphabetical",
+            "showSearch": false,
+            "searchQuery": "",
+            "backlinkCollapsed": false,
+            "unlinkedCollapsed": true
+          }
+        }
+      },
+      {
+        "id": "fc984f1fc7eff74b",
+        "type": "leaf",
+        "state": {
+          "type": "outgoing-link",
+          "state": {
+            "linksCollapsed": false,
+            "unlinkedCollapsed": true
+          }
+        }
+      },
+      {
+        "id": "51c4f36b01f9508e",
+        "type": "leaf",
+        "state": {
+          "type": "outline",
+          "state": {}
+        }
+      }
+    ],
+    "currentTab": 0
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "0a2c733fcbd132df",
+  "lastOpenFiles": [
+    "Papers/img/ALSM.png",
+    "Papers/pdf/2020 404 A day-ahead PV power forecasting method based on LSTM-RNN model and time correlation modification under partial daily pattern prediction framework.pdf",
+    "Papers/Paper.md",
+    "Papers/img",
+    "Papers/pdf",
+    "Papers",
+    "image/image.png",
+    "image",
+    "Excalidraw/pv_forecasting.excalidraw.md",
+    "Excalidraw",
+    "Pasted image 20240202170308.png",
+    "Idea.canvas",
+    "Paper.md",
+    "Project/PV forecasting.md",
+    "Project",
+    "Paper/PV forecasting.md",
+    "Paper"
+  ]
+}

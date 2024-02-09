@@ -97,7 +97,7 @@ def trend_model(thetas, t, device):
 
 ## 3. 결과는 어떤가요?
 결과적으로 I+G 즉 모든 걸 잘 조합한게 성능이 좋았습니다. 물론 tourism 데이터에서는 G 모델이 성능이 좋았습니다.
-![[res.png]]
+![[ds/nbeats/attachments/res.png]]
 
 아래와 같은 점이 이 논문은 신선했습니다.
 - backcast를 활용한다는 점

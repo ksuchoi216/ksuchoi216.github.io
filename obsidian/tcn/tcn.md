@@ -1,6 +1,6 @@
 ---
 excerpt_separator: <!--more-->
-date: 2024-02-11
+date: 2024-01-10
 category: time-series
 tags:
   - cnn

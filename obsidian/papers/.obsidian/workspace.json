@@ -1,0 +1,174 @@
+{
+  "main": {
+    "id": "a78998fd769d6d3c",
+    "type": "split",
+    "children": [
+      {
+        "id": "886271c66b5885ac",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "8ad54267b19ff8d0",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "c17d69f5f30406f9",
+    "type": "split",
+    "children": [
+      {
+        "id": "2eeb815ce1fd5cde",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "5d42a9fcea922ad5",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "49f20370f76cb350",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "tag:#pv",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "6c7a5ad861e2b894",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "horizontal",
+    "width": 200
+  },
+  "right": {
+    "id": "a7b76e8e1bf3f974",
+    "type": "split",
+    "children": [
+      {
+        "id": "2e9a50e9c90da358",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "9b8205cbe13750ad",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "01af886704ee1e89",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "fd4d886273a77aac",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "34a90b96e8aad854",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "obsidian-excalidraw-plugin:Create new drawing": false
+    }
+  },
+  "active": "8ad54267b19ff8d0",
+  "lastOpenFiles": [
+    "Papers/pdf/2020 404 A day-ahead PV power forecasting method based on LSTM-RNN model and time correlation modification under partial daily pattern prediction framework.pdf",
+    "Papers/Paper.md",
+    "Pasted image 20240202170308.png",
+    "Papers/img/ALSM.png",
+    "Papers/img",
+    "Papers",
+    "image/image.png",
+    "Pasted image 20240202165049.png",
+    "Pasted image 20240202165047.png",
+    "Pasted image 20240202165023.png",
+    "test.png",
+    "Excalidraw/pv_forecasting.excalidraw.md",
+    "Project/PV forecasting.md",
+    "image/calculation.png",
+    "image",
+    "Pasted image 20240202155910.png",
+    "Pasted image 20240202155919.png",
+    "Excalidraw/Drawing 2024-02-02 15.51.02.excalidraw.md",
+    "Excalidraw",
+    "Idea.canvas",
+    "Untitled.canvas",
+    "Project",
+    "Annotation.md",
+    "Papers/pdf",
+    "PV forecasting/PV forecasting.md",
+    "2022 404 A day-ahead PV power forecasting method based on LSTM-RNN model and time correlation modification under partial daily pattern prediction framework.pdf.md",
+    "PV forecasting/Untitled.md",
+    "PV forecasting"
+  ]
+}

@@ -1,0 +1,9 @@
+  {% for category in site.categories %}
+  {% if category[0] == "papers" %}
+
+  {% for entry in category.last %}
+  {% include entry.html %}
+  {% endfor %}
+  {% endif %}
+
+  {% endfor %}

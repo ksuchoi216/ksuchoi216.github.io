@@ -1,0 +1,221 @@
+---
+excerpt_separator: <!--more-->
+date: 2020-01-01
+category: papers
+tags:
+  - papers
+title: Papers
+---
+요즘 공부하고 있는 논문들을 정리한 목록입니다. 시계열 예측, 전력 예측 등에 관심이 있어 공부하고 있습니다.
+<!--more-->
+
+**General Forecasting**
+- 2023 11 TSMixer An All-MLP Architecture for Time Series Fore- casting.pdf #ts 
+	- What did the authors try to accomplish?
+		- univariate linear models can outperform deep learning
+		- stacking MLP
+	- What were the key elements of the approach?
+		- time mixing MLP: temporal patterns(same time)
+		- feature mixing MLP: leverage covariate information
+		- temporal projection: learn temporal patterns and map forecasting
+		- normalisation + residual connection
+		- ![[tsmixer.png]]
+	- What can you use yourself?
+		- mixer: time and feature
+	- What other references do you want to follow?
+	- pdf: [[2023 11 TSMixer An All-MLP Architecture for Time Series Fore- casting.pdf]]
+- Autoformer: Decomposition Transformers with Auto-Correlation for Long-Term Series Forecasting #transformer #ts 
+	- Why-What?
+		- losing long-tem information
+		- -> decomposition with auto-correlation
+	- How(Key elements)?
+		- [[autoformer.png]]
+		- series decomposition + auto-correlation(FFT base)
+	- So what?
+		- auto-correlation
+		- series decomposition
+	- References?
+	- pdf: [[2021 808 Autoformer Decomposition Transformers with Auto-Correlation for Long-Term Series Forecasting.pdf]]
+- 2019 855 N-BEATS NEURAL BASIS EXPANSION ANALYSIS FOR INTERPRETABLE TIME SERIES FORECASTING #ts 
+	- Why-What accomplishment?
+		- improvement for univariate time series forecasting
+	- How(Key elements)?
+		- backward and forward residual links
+		- stack of FCNN
+		- 3 three different blocks - generic / trend / seasonality
+		- ![[Pasted image 20240205194025.png]]
+	- So what?
+		- backward prediction
+		- trend, seasonality block
+	- References?
+		- pdf: [[2019 855 N-BEATS NEURAL BASIS EXPANSION ANALYSIS FOR INTERPRETABLE TIME SERIES FORECASTING.pdf]]
+	- 
+
+**PV forecasting**
+- 2019 390 A comparison of day-ahead photovoltaic power forecasting models based on T deep learning neural network #pv (CNN-LSTM)
+	- What did the authors try to accomplish?
+		- comparison for CNN, LSTM, CNN-LSTM
+	- What were the key elements of the approach?
+		- weather data -> CNN -> extracted feature
+		- power data -> LSTM -> prediction
+		- fusion of CNN+LSTM 
+	- What can you use yourself?
+		- there are experiment settings in detail.
+	- What other references do you want to follow?
+		- pdf: [[2019 390 A comparison of day-ahead photovoltaic power forecasting models based on T deep learning neural network.pdf]]
+		- dataset: https://dkasolarcentre.com.au/download?location=alice-springs
+			- 1B dataset
+- 2023 4 Short-Term Photovoltaic Power Forecasting Based on a Novel Autoformer Model #pv #transformer 
+	- What did the authors try to accomplish?
+		- improvement of autoformer
+		- ADAMS de-stationary attention and multi-scale framework
+		- more extracted non stationary information
+		- captured symmmetry inherent and non-stationairity in data patterns
+	- What were the key elements of the approach?
+		- multi-scale frame work
+		- de-stationary attention
+	- What can you use yourself?
+	- What other references do you want to follow?
+	- pdf: 
+- 2020 106 Photovoltaic power forecasting with a hybrid deep learning approach.pdf #pv
+	- Why(accomplishment)?
+		- stable forecasting: not use adjacent days
+		- CNN: non linear feature and invariant structures
+		- LSTM: temporal feature
+	- What-How(Key elements)?
+		- correlation for same hour -> adjacent day is important
+		- CNN+LSTM![[Pasted image 20240206184022.png]]
+		- $P_{pred} = \alpha P_{CNN}+ \beta P_{LSTM}$ subject to $\alpha + \beta = 1$
+	- So what?
+		- how to use CNN+LSTM for pv power forecasting
+	- References?
+		- dataset: Elia. Belgium’s Electricity Transmission System Operator. Accessed: Jan. 13, 2020. [Online]. Available: https://www.elia.be/en/grid- data/power-generation/solar-pv-power-generation-data
+	- pdf: [[2020 106 Photovoltaic power forecasting with a hybrid deep learning approach.pdf]]
+- 2019 173 Day-Ahead Photovoltaic Forecasting A Comparison of the Most Effective Techniques #pv 
+	- Why-What?
+		- forecasting depended on whether it is sunny day or cloudy day.
+	- How(Key elements)?
+		- case1: [[case1 model.png]]
+			- irr forecasting -> avg irr -> sunny or cloudy -> power forecasting
+		- case2: [[case2 model.png]]
+			- weather forecast+clear sky model -> network -> power forecasting
+	- So what?
+		- clear sky model
+		- sunny or cloudy criterian
+	- References?
+		- dataset: ![[Dataset-SolarTechLab.csv]]
+		  - [ ] Bird, R.E.; Riordan, C. Simple Solar Spectral Model for Direct and Diffuse Irradiance on Horizontal and Tilted Planes at the Earth’s Surface for Cloudless Atmospheres. 1986.
+		 - [ ] Grimaccia, F.; Leva, S.; Mussetta, M.; Ogliari, E. ANN sizing procedure for the day-ahead output power forecast of a PV plant. Appl. Sci. 2017, 7, 622
+	 - pdf: [[2019 173 Day-Ahead Photovoltaic Forecasting A Comparison of the Most Effective Techniques .pdf]]
+- 2020 404 A day-ahead PV power forecasting method based on LSTM-RNN model and time correlation modification under partial daily pattern prediction framework.pdf #pv (RNN-LSTM + TCM + PDPP)
+	- What did the authors try to accomplish?
+		- previous research has an overfitting and insufficient generation
+		- a lack of utilising weather changes and cloud movement
+		- how to couple between weather and electricity
+	- What were the key elements of the approach?
+		- RNN-LSTM
+		- TCM time correlation modification -> day, year correlation and weather similarity
+		- PDPP partial daily pattern prediction
+	- What can you use yourself?
+		- way to compute the correlation 
+		- classification of weather or cloud patterns
+	- What other references do you want to follow?
+		- pdf: [[2020 404 A day-ahead PV power forecasting method based on LSTM-RNN model and time correlation modification under partial daily pattern prediction framework 1.pdf]]
+- 2021 132 Day-ahead hourly photovoltaic power forecasting using attention-based CNN-LSTM neural network embedded with multiple relevant and target variables prediction pattern #pv (CNN-LSTM with ST and LT)
+	- What did the authors try to accomplish?
+		- limit weather forecast data
+		- power data is non-stationary
+		- complex non-linearity of pv time
+	- What were the key elements of the approach?
+		- merge power data with weather data
+		- resample data for short-term and long-term
+		- CNN(reduce dim) + LSTM
+		- Attention
+	- What can you use yourself?
+		- ST and LT
+		- CNN + LSTM
+	- What other references do you want to follow?
+		- pdf: [[2021 132 Day-ahead hourly photovoltaic power forecasting using attention- based CNN-LSTM neural network embedded with multiple relevant and target variables prediction pattern.pdf]]
+- 2023 0 Improving day-ahead Solar Irradiance Time Series Forecasting by Leveraging Spatio-Temporal Context.pdf #pv #satellite
+	- Why-What?
+		- spatio-temporal context using satellite data
+		- new multi-modal dataset
+		- dayahead forecasting more difficult than 3-6 hours
+	- How(Key elements)? - [[satellite-transformer.png]]
+		- vision transformer for satellite data
+		- temporal transformer for past data
+		- cross -> temporal transformer
+		- multiple quantile head
+		- + positional embedding on each stage 
+	- So what?
+		- satellite data
+		- transformer
+	- References?
+		- [ ] A review of solar forecasting, its dependence on atmospheric sciences and implications for grid integration: Towards carbon neutrality. Renewable and Sustainable Energy Reviews
+		- [ ] Nielsen, A. H., Iosifidis, A., and Karstoft, H. (2021). Irradiancenet: Spatiotemporal deep learning model for satellite-derived solar irradiance short-term forecasting. Solar Energy, 228:659–669.
+		- [ ] Bone, V., Pidgeon, J., Kearney, M., and Veeraragavan, A. (2018). Intra-hour direct normal irradiance forecasting through adaptive clear-sky modelling and cloud tracking. Solar Energy, 159:852–867.
+	- pdf: [[2023 0 Improving day-ahead Solar Irradiance Time Series Forecasting by Leveraging Spatio-Temporal Context.pdf]]
+- 2021 132 Day-ahead hourly photovoltaic power forecasting using attention- based CNN-LSTM neural network embedded with multiple relevant and target variables prediction pattern #pv 
+	- Why-What?
+		- ST and LT temporal information → CNN-LSTM for ST and LT → attention mechanizm
+	- pdf: [[2021 132 Day-ahead hourly photovoltaic power forecasting using attention- based CNN-LSTM neural network embedded with multiple relevant and target variables prediction pattern 1.pdf]]
+- 2020 680 A review and evaluation of the state-of-the-art in PV solar power forecasting Techniques and optimization #pv 
+
+
+**Anomaly detection**
+- 2022 41 Machine Learning Schemes for Anomaly Detection in Solar Power Plants #pv #ad
+	- Why-What?
+		- review: ML base anomaly for pv
+	- How(Key elements)?
+		- Autoencoder-LSTM
+		- Facebook-prophet - math model(equation)
+		- Isolation Forest
+			- randomly selected feature -> randomly sampling -> tree
+			- if sample goes the deeper, it would be anomaly
+		- hyperparameter selection explained.
+	- So what?
+		- dataset
+		- code in kaggle(prophet, isolation forest)
+	- References?
+		- dataset- https://www.kaggle.com/datasets/anikannal/solar-power-generation-data?resource=download
+
+**ESS**
+- 2020 26 Optimal ESS Scheduling for Peak Shaving of Building Energy Using Accuracy-Enhanced Load Forecast
+	- What did the authors try to accomplish?
+		- 
+	- What were the key elements of the approach?
+	- What can you use yourself?
+	- What other references do you want to follow?
+
+
+**Temp**
+- 2018 162 Reinforcement Learning Based Energy Management Algorithm for Smart Energy Buildings
+- 2019 287 Deep Reinforcement Learning for Smart Home Energy Management
+- 2020 192 Study on deep reinforcement learning techniques for building energy consumption forecasting
+- 2022 2 Handling Load Uncertainty during On-Peak Time via Dual ESS and LSTM with Load Data Augmentation
+- 2019 1 Stochastic Real-time Demand Prediction for Building and Charging and Discharging Technique of ESS Based on Machine-Learning.pdf
+- 2020 204 Short-Term Photovoltaic Power Forecasting Using an LSTM Neural Network and Synthetic Weather Forecast
+- 2020 264 Hybrid CNN-LSTM Model for Short-Term Individual Household Load Forecasting
+- 2019 1008 Predicting residential energy consumption using CNN-LSTM neural networks 
+- 2015 124 A hybrid short-term load forecasting with a new input selection framework
+- 2016 695 Building Energy Load Forecasting using Deep Neural Networks
+- 2017 2017 Short-Term Residential Load Forecasting based on LSTM Recurrent Neural Network
+- 2023 18 Review of Family-Level Short-Term Load Forecasting and Its Application in Household Energy Management System
+- 2021 171 Deep learning models for solar irradiance forecasting A comprehensive review
+- 2022 17 Experimental Investigation of Variational Mode Decomposition and Deep Learning for Short-Term Multi-horizon Residential Electric Load Forecasting.pdf
+- 2021 351 Artificial intelligence based anomaly detection of energy consumption in buildings- A review, current trends and new perspectives.pdf
+- 2023 386 Are Transformers Effective for Time Series Forecasting?
+- 2019 408 Day-ahead building-level load forecasts using deep learning vs. traditional T time-series techniques
+- 2021 1 Particle Swarm Optimization Based Peak Shaving Scheme Using ESS for Reducing Electricity Tariff
+- 2023 1 Optimal Energy System Scheduling Using A Constraint Aware Reinforcement Learning Algorithm
+- 2018 32 Optimal Power Scheduling for a Medium Voltage ACDC Hybrid Distribution Network
+- 2022 7 Optimization of ESS Scheduling for Cost Reduction in Commercial and Industry Customers in Korea
+- 2020 35 MILP-PSO Combined Optimization Algorithm for an Islanded Microgrid Scheduling with Detailed Battery ESS Efficiency Model and Policy Considerations
+- 2020 172 Multi-Sequence LSTM-RNN Deep Learning and Metaheuristics for Electric Load Forecasting
+- 2022 2 Handling Load Uncertainty during On Peak Time via Dual ESS and LSTM with Load Data Augmentation
+- 2020 150 Reinforcement learning for whole-building HVAC control and demand response
+- 2023 10 Solar irradiance forecasting models using machine learning techniques and digital twin- A case study with comparison.pdf
+- 2018 259 Deep Neural Networks and Mixed Integer Linear Optimization.pdf
+- 2021 81 Deep sequence to sequence Bi-LSTM neural networks for day-ahead peak load forecasting
+- 2021 213 A Review of Deep Reinforcement Learning for Smart Building Energy Management
+- 2019 10 Development of a Two-Stage ESS-Scheduling Model for Cost Minimization Using Machine Learning-Based Load Prediction Techniques
