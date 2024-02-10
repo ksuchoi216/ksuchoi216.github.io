@@ -10,6 +10,25 @@ layout: page
     {% assign tags_max = tag[1].size %}
   {% endif %}
 {% endfor %}
+{% for tag_names in tag_names_array %}
+  {% assign tag_names_list = tag_names | split: "," %}
+  {% for tag_name in tag_names_list %}
+    <section id="{{ tag_name | slugify | downcase }}" class="taxonomy-section">
+      <h2 class="taxonomy-title">{{ tag_name }}</h2>
+      {% for tag in site.tags %}
+        {% if tag[0] == tag_name %}
+          <div class="entries-{{ page.entries_layout | default: 'list' }}">
+            {% for entry in tag.last %}
+              {% include entry.html %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endfor %}
+      <a href="#page-title" class="back-to-top">{{ site.data.text[site.locale].back_to_top | default: 'Back to Top' }} &uarr;</a>
+    </section>
+  {% endfor %}
+{% endfor %}
+
 
 {% assign tag_names_array = "" %}
 {% assign tag_counts = "" %}
@@ -60,22 +79,3 @@ layout: page
     {% endfor %}
   {% endfor %}
 </ul>
-
-{% for tag_names in tag_names_array %}
-  {% assign tag_names_list = tag_names | split: "," %}
-  {% for tag_name in tag_names_list %}
-    <section id="{{ tag_name | slugify | downcase }}" class="taxonomy-section">
-      <h2 class="taxonomy-title">{{ tag_name }}</h2>
-      {% for tag in site.tags %}
-        {% if tag[0] == tag_name %}
-          <div class="entries-{{ page.entries_layout | default: 'list' }}">
-            {% for entry in tag.last %}
-              {% include entry.html %}
-            {% endfor %}
-          </div>
-        {% endif %}
-      {% endfor %}
-      <a href="#page-title" class="back-to-top">{{ site.data.text[site.locale].back_to_top | default: 'Back to Top' }} &uarr;</a>
-    </section>
-  {% endfor %}
-{% endfor %}

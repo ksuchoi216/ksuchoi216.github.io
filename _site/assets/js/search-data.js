@@ -1,9 +1,4 @@
 var store = [{
-        "title": "Chocolate Chip Cookies",
-        "excerpt":"A chocolate chip cookie is a drop cookie that originated in the United States and features chocolate chips as its distinguishing ingredient. The traditional recipe combines a dough composed of butter and both brown and white sugar with semi-sweet chocolate chips. Variations include recipes with other types of chocolate as...","categories": [],
-        "tags": [],
-        "url": "http://localhost:4000/courses/test/"
-      },{
         "title": "Papers",
         "excerpt":"요즘 공부하고 있는 논문들을 정리한 목록입니다. 시계열 예측, 전력 예측 등에 관심이 있어 공부하고 있습니다. General Forecasting 2023 11 TSMixer An All-MLP Architecture for Time Series Fore- casting.pdf #ts What did the authors try to accomplish? univariate linear models can outperform deep learning stacking MLP What were the key elements...","categories": ["papers"],
         "tags": ["papers"],

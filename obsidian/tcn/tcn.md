@@ -4,6 +4,7 @@ date: 2024-01-10
 category: time-series
 tags:
   - cnn
+  - intermediate
 title: 1D CNN을 더 길게 만들어보자 TCN
 ---
 

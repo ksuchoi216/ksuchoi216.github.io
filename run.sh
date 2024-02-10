@@ -1,2 +1,2 @@
 # python obsidian-post.py
-python obsidian-posts.py
+python obsidian.py

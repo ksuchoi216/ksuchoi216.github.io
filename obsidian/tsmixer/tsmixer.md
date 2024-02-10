@@ -4,6 +4,7 @@ date: 2024-02-07
 category: time-series
 tags:
   - ts
+  - advanced
 title: 시계열 Transformer 보다 Linear mixer가 더 좋아 TSMixer
 ---
 Transformer가 GPT로 뛰어난 성능을 냈지만 일반적인 시계열 데이터에서 Transformer 모델보단 MLP가 성능이 더 좋라고 이야기하는 논문인 TSMixer를 살펴봅시다.

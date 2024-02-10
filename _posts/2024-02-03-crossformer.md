@@ -5,6 +5,7 @@ categories:
    - time-series
 tags:
    - transformer
+   - advanced
 image:
      path: /images/crossformer/main.png
      thumbnail: /images/crossformer/main.png

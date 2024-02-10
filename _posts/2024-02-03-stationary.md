@@ -5,6 +5,7 @@ categories:
    - time-series
 tags:
    - stat
+   - beginner
 image:
      path: /images/stationary/graphs.png
      thumbnail: /images/stationary/graphs.png

@@ -5,6 +5,7 @@ categories:
    - time-series
 tags:
    - transformer
+   - advanced
 image:
      path: /images/autoformer/main.png
      thumbnail: /images/autoformer/main.png

@@ -4,6 +4,7 @@ date: 2023-12-06
 category: time-series
 tags:
   - stat
+  - beginner
 title: 통계 기반 예측 기본 - 아리마 ARIMA
 ---
 이 글을 읽는다면 아래 내용을 얻어가게 됩니다.
