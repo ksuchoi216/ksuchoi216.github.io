@@ -113,6 +113,7 @@ def create_markdown(args, i, title, contents, date):
     end_block = [
         "---\n",
         "\n",
+        "<!--more-->\n",
     ]
     base_lines = start_block + tag_block + end_block
     lines = base_lines + contents
