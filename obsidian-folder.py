@@ -137,7 +137,9 @@ def _main(args, path):
         # print(f"{old_img_path}", ">>>>>>", new_img_path)
         shutil.copy(f"{old_img_path}", f".{new_img_path}")
 
-    print(len(args.titles), len(args.contents), len(args.dates))
+    print(
+        f"titles, contents, dates = {len(args.titles)}, {len(args.contents)}, {len(args.dates)}"
+    )
     for i, (title, content, date) in enumerate(
         zip(args.titles, args.contents, args.dates)
     ):
