@@ -1,2 +1,3 @@
 # python obsidian-post.py
-python obsidian.py
+python obsidian-folders.py
+python obsidian-folder.py

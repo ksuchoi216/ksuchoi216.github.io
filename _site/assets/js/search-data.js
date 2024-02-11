@@ -14,6 +14,26 @@ var store = [{
         "tags": ["transformer","advanced"],
         "url": "http://localhost:4000/time-series/2024/01/28/autoformer.html"
       },{
+        "title": "[짧은 논문 소개][General-Forecasting] 2023 11 TSMixer An All-MLP Architecture for Time Series Forecasting #ts ",
+        "excerpt":"What did the authors try to accomplish? univariate linear models can outperform deep learning stacking MLPWhat were the key elements of the approach? time mixing MLP: temporal patterns(same time) feature mixing MLP: leverage covariate information temporal projection: learn temporal patterns and map forecasting normalisation + residual connectionWhat can you use...","categories": ["introduction to a paper"],
+        "tags": ["ts","transformer","ts","ts","pv"],
+        "url": "http://localhost:4000/introduction%20to%20a%20paper/2024/02/01/paper00.html"
+      },{
+        "title": "[짧은 논문 소개][General-Forecasting] Autoformer: Decomposition Transformers with Auto-Correlation for Long-Term Series Forecasting #transformer #ts ",
+        "excerpt":" Why-What?   losing long-tem information  -&gt; decomposition with auto-correlationHow(Key elements)?   series decomposition + auto-correlation(FFT base)So what?   auto-correlation  series decompositionReferences? ","categories": ["introduction to a paper"],
+        "tags": ["ts","transformer","ts","ts","pv"],
+        "url": "http://localhost:4000/introduction%20to%20a%20paper/2024/02/01/paper01.html"
+      },{
+        "title": "[짧은 논문 소개][General-Forecasting] 2019 855 N-BEATS NEURAL BASIS EXPANSION ANALYSIS FOR INTERPRETABLE TIME SERIES FORECASTING #ts ",
+        "excerpt":" Why-What accomplishment?   improvement for univariate time series forecastingHow(Key elements)?   backward and forward residual links  stack of FCNN  3 three different blocks - generic / trend / seasonalitySo what?   backward prediction  trend, seasonality blockReferences?   ","categories": ["introduction to a paper"],
+        "tags": ["ts","transformer","ts","ts","pv"],
+        "url": "http://localhost:4000/introduction%20to%20a%20paper/2024/02/01/paper02.html"
+      },{
+        "title": "[짧은 논문 소개][PV-Forecasting] 2019 390 A comparison of day-ahead photovoltaic power forecasting models based on T deep learning neural network #pv (CNN-LSTM) ",
+        "excerpt":"What did the authors try to accomplish? comparison for CNN, LSTM, CNN-LSTMWhat were the key elements of the approach? weather data -&gt; CNN -&gt; extracted feature power data -&gt; LSTM -&gt; prediction fusion of CNN+LSTMWhat can you use yourself? there are experiment settings in detail.What other references do you want...","categories": ["introduction to a paper"],
+        "tags": ["ts","transformer","ts","ts","pv"],
+        "url": "http://localhost:4000/introduction%20to%20a%20paper/2024/02/01/paper03.html"
+      },{
         "title": "시간도 섞고 피쳐도 섞는 crossformer",
         "excerpt":"기존 트랜스포머 기반 모델들은 cross time dependency 있다는 문제가 있습니다. crossformer는 이러한 cross time dependency를 해결하면서 cross dimension dependency 또한 개선하면서 기존 트랜스포머에 비해 성능을 개선했습니다. 그렇다면 어떻게 해결했는지 살펴봅시다. Why crossformer is important? 인트로에서 이야기 했듯이 cross time dependency를 해결한 모델이 crossformer 입니다. 그렇다면 cross time dependency가 무엇일까요?왼쪽 그림과...","categories": ["time-series"],
         "tags": ["transformer","advanced"],

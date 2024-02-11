@@ -1,0 +1,54 @@
+**General-Forecasting**
+- 2023 11 TSMixer An All-MLP Architecture for Time Series Forecasting #ts 
+	- Main Figure: 2024-02-01 ![[tsmixer.png]]
+	- What did the authors try to accomplish?
+		- univariate linear models can outperform deep learning
+		- stacking MLP
+	- What were the key elements of the approach?
+		- time mixing MLP: temporal patterns(same time)
+		- feature mixing MLP: leverage covariate information
+		- temporal projection: learn temporal patterns and map forecasting
+		- normalisation + residual connection
+	- What can you use yourself?
+		- mixer: time and feature
+	- What other references do you want to follow?
+- Autoformer: Decomposition Transformers with Auto-Correlation for Long-Term Series Forecasting #transformer #ts 
+	- Main Figure: 2024-02-01![[autoformer.png]]
+	- Why-What?
+		- losing long-tem information
+		- -> decomposition with auto-correlation
+	- How(Key elements)?
+		- series decomposition + auto-correlation(FFT base)
+	- So what?
+		- auto-correlation
+		- series decomposition
+	- References?
+- 2019 855 N-BEATS NEURAL BASIS EXPANSION ANALYSIS FOR INTERPRETABLE TIME SERIES FORECASTING #ts 
+	- Main Figure: 2024-02-01 ![[Pasted image 20240205194025.png]]
+	- Why-What accomplishment?
+		- improvement for univariate time series forecasting
+	- How(Key elements)?
+		- backward and forward residual links
+		- stack of FCNN
+		- 3 three different blocks - generic / trend / seasonality
+	- So what?
+		- backward prediction
+		- trend, seasonality block
+	- References?
+
+**PV-Forecasting**
+- 2019 390 A comparison of day-ahead photovoltaic power forecasting models based on T deep learning neural network #pv (CNN-LSTM)
+	- Main Figure: 2024-02-01 ![[cnn_lstm_hybrid.png]]
+	- What did the authors try to accomplsh?
+		- comparison for CNN, LSTM, CNN-LSTM for day-ahead forecasting
+	- What were the key elements of the approach?
+		- directly predict power by using CNN and LSTM models
+		- CLSTM(CNN+LSTM) use both weather data and power data
+			- weather data -> CNN -> extracted feature
+			- power data -> LSTM -> prediction
+	- What can you use yourself?
+		- there are experiment settings in detail. It would be useful for experiments
+		- but a lack of how to use input data(preprocessing)
+	- What other references do you want to follow?
+		- dataset: https://dkasolarcentre.com.au/download?location=alice-springs
+			- 1B dataset

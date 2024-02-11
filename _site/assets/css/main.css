@@ -1386,16 +1386,16 @@ th {
   letter-spacing: -2px;
 }
 .page-title {
-  font-size: 48px;
+  font-size: 40px;
 }
 @media screen and (min-width: 320px) {
   .page-title {
-    font-size: calc(48px + 12 * (100vw - 320px) / 960);
+    font-size: calc(40px + 5 * (100vw - 320px) / 960);
   }
 }
 @media screen and (min-width: 1280px) {
   .page-title {
-    font-size: 60px;
+    font-size: 45px;
   }
 }
 
