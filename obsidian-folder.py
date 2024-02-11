@@ -103,7 +103,7 @@ def create_markdown(args, i, title, contents, date):
         "excerpt_separator: '<!--more-->'\n",
         f"title: '{title}'\n",
         "categories:\n",
-        f"   - introduction to a paper\n",
+        f"   - paper\n",
     ]
     tag_block = ["tags:\n"]
     for tag in args.tags:
