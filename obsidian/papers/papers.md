@@ -1,41 +1,3 @@
-**General-Forecasting**
-- 2023 11 TSMixer An All-MLP Architecture for Time Series Forecasting #ts 
-	- Main Figure: 2024-02-01 ![[tsmixer.png]]
-	- What did the authors try to accomplish?
-		- univariate linear models can outperform deep learning
-		- stacking mixer layers(MLP) for combination of same time data or seam feature data.
-	- What were the key elements of the approach?
-		- time mixing MLP: temporal patterns(same time)
-		- feature mixing MLP: leverage covariate information
-		- temporal projection: learn temporal patterns and map forecasting
-		- normalisation + residual connection
-	- What can you use yourself?
-		- mixer: time and feature 
-	- What other references do you want to follow?
-		- None
-- 2021 808 Autoformer Decomposition Transformers with Auto-Correlation for Long-Term Series Forecasting #transformer #ts 
-	- Main Figure: 2024-02-01![[autoformer.png]]
-	- Why-What?
-		- Autoformer starts from how to keep temporal information in time series data without losing long-tem information. This is due to the fact that the attention based network has deeper layers. Therefore, as the data goes through layers, the temporal information will lose.
-	- How(Key elements)?
-		- how to extract more meaningful temporal information -> series decomposition
-		- loosing the temporal information-> auto-correlation(FFT base) + skip connection
-	- So what?
-		- auto-correlation
-		- series decomposition
-	- References?
-- 2019 855 N-BEATS NEURAL BASIS EXPANSION ANALYSIS FOR INTERPRETABLE TIME SERIES FORECASTING #ts 
-	- Main Figure: 2024-02-01 ![[Pasted image 20240205194025.png]]
-	- Why-What accomplishment?
-		- improvement for univariate time series forecasting
-	- How(Key elements)?
-		- backward and forward residual links
-		- stack of FCNN
-		- 3 three different blocks - generic / trend / seasonality
-	- So what?
-		- backward prediction
-		- trend, seasonality block
-	- References?
 
 **PV-Forecasting**
 - 2019 390 A comparison of day-ahead photovoltaic power forecasting models based on T deep learning neural network #pv (CNN-LSTM)
@@ -96,4 +58,47 @@
 		- classification of weather or cloud patterns
 	- What other references do you want to follow?
 		- None
+- 2021 132 Day-ahead hourly photovoltaic power forecasting using attention-based CNN-LSTM neural network embedded with multiple relevant and target variables prediction pattern #pv (CNN-LSTM with ST and LT)
+	- Main figure: 2024-02-11 ![[cnn-lstm-st-lt.png]]
+	- What did the authors try to accomplish?(목적)
+		- limit weather forecast data
+		- power data is non-stationary
+		- complex non-linearity of pv time
+	- What were the key elements of the approach?(주요 요소)
+		- merge power data with weather data
+		- resample data for short-term and long-term
+		- CNN(reduce dim) + LSTM
+		- Attention
+	- What can you use yourself?(적용)
+		- ST and LT
+		- CNN + LSTM
+	- What other references do you want to follow?(다음 읽을거리)
+		- None
+- 2023 0 Improving day-ahead Solar Irradiance Time Series Forecasting by Leveraging Spatio-Temporal Context.pdf #pv #satellite #vision 
+	- Main figure: 2024-02-14  ![[satellite-transformer.png]]
+	- What did the authors try to accomplish?(목적)
+		- extract spatio-temporal context using satellite data
+		- testing scheme for crucial situations(especially cloud impact)
+	- What were the key elements of the approach?(주요 요소)
+		- rotary positional embedding: to mix the station time series and the context
+		- crossvivit 
+			- tokenizer: dimension mapping
+			- masking: forget past data to get more context information -> but in practice, not good
+			- encoding: multi head self-attention based on MLP
+			- mixing: crossformer
+			- decoding: multi head self-attention based on MLP
+		- multi-quantiles
+			- multi quantile loss: $L_{\alpha}(y, \hat{y}) =\max\{\alpha(\hat{y}-y), (1-\alpha)(\hat{y}-y)\}$
+	- What can you use yourself?(적용)
+		- how to deal with image data in time series
+		- multi-quantile loss
+	- What other references do you want to follow?(다음 읽을거리)
+		- A review of solar forecasting, its dependence on atmospheric sciences and implications for grid integration: Towards carbon neutrality. Renewable and Sustainable Energy Reviews
+		- Nielsen, A. H., Iosifidis, A., and Karstoft, H. (2021). Irradiancenet: Spatiotemporal deep learning model for satellite-derived solar irradiance short-term forecasting. Solar Energy, 228:659–669.
+		- Bone, V., Pidgeon, J., Kearney, M., and Veeraragavan, A. (2018). Intra-hour direct normal irradiance forecasting through adaptive clear-sky modelling and cloud tracking. Solar Energy, 159:852–867.
+
+---
+- 2021 132 Day-ahead hourly photovoltaic power forecasting using attention-based CNN-LSTM neural network embedded with multiple relevant and target variables prediction pattern #pv 
+- 2020 680 A review and evaluation of the state-of-the-art in PV solar power forecasting Techniques and optimization #pv 
+
 

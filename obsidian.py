@@ -5,33 +5,6 @@ import shutil
 import sys
 from types import SimpleNamespace
 
-OBSIDIAN_DIR_PAPERS = (
-    "/Users/KC/Library/Mobile Documents/iCloud~md~obsidian/Documents/FallForward/papers"
-)
-CURRENT_DIR = "/Users/KC/Library/CloudStorage/GoogleDrive-ksuchoi216@gmail.com/My Drive/My Code/ksuchoi216.github.io"
-FOLDER_NAME = f"obsidian"
-FOLDER_DIR = f"{CURRENT_DIR}/{FOLDER_NAME}"
-
-
-def copy_files(obsidian_dir, selected_folder=False):
-
-    if not os.path.exists(FOLDER_DIR):
-        os.makedirs(FOLDER_DIR)
-
-    if selected_folder:
-        paths = [f"{obsidian_dir}"]
-    else:
-        paths = glob.glob(f"{obsidian_dir}/**")
-
-    for old_path in paths:
-        foldername = os.path.basename(old_path)
-        new_path = f"{FOLDER_DIR}/{foldername}"
-
-        try:
-            shutil.copytree(old_path, new_path, dirs_exist_ok=True)
-        except Exception as e:
-            print(e)
-
 
 def modify_lines(args, lines):
     args.old_dir = f"{OBSIDIAN_DIR_PAPERS}"
@@ -165,11 +138,24 @@ def _main(args, path):
     # sys.exit()
 
 
-if __name__ == "__main__":
-    copy_files(OBSIDIAN_DIR_PAPERS, selected_folder=True)
+def copy_dir(dir_from, dir_to):
 
-    # path = glob.glob(f"{FOLDER_DIR}/papers/paper.md")[0]
-    path = glob.glob(f"{FOLDER_DIR}/papers/papers.md")[0]
-    print(f"path: {path}")
-    args = SimpleNamespace()
-    _main(args, path)
+    if not os.path.exists(dir_to):
+        os.makedirs(dir_to)
+
+    paths = glob.glob(f"{dir_from}/*.md")
+    for path in paths:
+        shutil.copy(path, dir_to)
+
+    print(f"test")
+
+
+DIR_FORM = (
+    "/Users/KC/Library/Mobile Documents/iCloud~md~obsidian/Documents/Obsidian/papers"
+)
+CURRENT_DIR = "/Users/KC/Library/CloudStorage/GoogleDrive-ksuchoi216@gmail.com/My Drive/ksuchoi216.github.io"
+DIR_TO = f"{CURRENT_DIR}/obsidian_temp"
+
+
+if __name__ == "__main__":
+    copy_dir(DIR_FORM, DIR_TO)

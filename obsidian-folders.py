@@ -120,9 +120,7 @@ def _main(args, path):
     filename = os.path.basename(args.old_md_path)
     args.keyword = re.match(r"(.+?)\.md$", filename).group(1)
     print(f"args.keyword: {args.keyword}")
-    if args.keyword == "papers":
-        return 0
-    
+
     args.old_dir = os.path.dirname(args.old_md_path)
 
     with open(args.old_md_path, "r", encoding="utf-8") as f:
@@ -148,6 +146,10 @@ if __name__ == "__main__":
     copy_files(OBSIDIAN_DIR_POSTS)
     paths = glob.glob(f"{FOLDER_DIR}/**")
     for i, path in enumerate(paths):
+        foldername = os.path.basename(path)
+        if foldername in ["papers"]:
+            continue
+
         args = SimpleNamespace()
         # print(f"path: {path}")
         _main(args, path)
