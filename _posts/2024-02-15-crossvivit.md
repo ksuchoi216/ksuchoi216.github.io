@@ -48,8 +48,4 @@ $$L_{\alpha}(y, \hat{y}) =\max\{\alpha(\hat{y}-y), (1-\alpha)(\hat{y}-y)\}$$
 
 ## 3. 그래서 어떤 결과를 냈나요(So what)?
 
-
-
 ![Pasted image 20240214211919.png](/images/crossvivit/Pasted image 20240214211919.png){:, .align-center}
-
-## 4. 참고 자료
